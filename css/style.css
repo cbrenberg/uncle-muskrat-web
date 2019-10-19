@@ -417,11 +417,6 @@ hr {
     justify-content: center;
 }
 
-.img-responsive {
-    max-width: 278px;
-    object-fit: contain;
-}
-
 .team-social {
 	margin-left: 0;
 	padding-left: 0;
