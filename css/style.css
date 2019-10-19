@@ -419,6 +419,7 @@ hr {
 
 .img-responsive {
     max-width: 278px;
+    object-fit: contain;
 }
 
 .team-social {
