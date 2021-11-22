@@ -5,17 +5,13 @@
     Author URL: https://bootstrapmade.com
 */
 
-/* ==== Google font ==== */
-@import url('https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic|Montserrat:700|Merriweather:400italic');
-
-
 body {
     width: 100%;
     height: 100%;
-    font-family: 'Lato',sans-serif;
+    font-family: 'Ultra',sans-serif;
 	font-weight: 300;
-    color: #666;
-    background-color: #fff;
+    color: rbg(197, 184, 167);
+    background-color: rbg(197, 184, 167);
 }
 
 html {
@@ -29,10 +25,9 @@ h3,
 h4,
 h5,
 h6 {
-    margin: 0 0 30px;
+    margin: 0 0 10px;
     text-transform: uppercase;
-    font-family: Montserrat,sans-serif;
-    font-weight: 700;
+    font-family: Ultra,sans-serif;
     letter-spacing: 1px;
 }
 
@@ -43,7 +38,7 @@ p {
 }
 
 p.lead {
-	font-weight: 600;
+	font-weight: 400;
 }
 
 a {
@@ -60,7 +55,7 @@ a:focus {
 }
 
 .light {
-    font-weight: 400;
+    font-weight: 200;
 }
 
 .navbar {
@@ -262,10 +257,13 @@ hr {
 /* ===========================
 --- General sections
 ============================ */
+section {
+    padding: 0 10px;
+}
 
 .home-section {
-    padding-top: 75px;
-    padding-bottom: 50px;
+    padding-top: 5px;
+    padding-bottom: 0px;
 	display:block;
     position:relative;
     z-index:120;
@@ -290,6 +288,10 @@ hr {
 	background: #f8f8f8;
 }
 
+.bg-sepia {
+    background-color: #e8e4df;
+}
+
 
 .bg-dark {
 	background: #575757;
@@ -309,23 +311,22 @@ hr {
 
 .intro {
 	width:100%;
-	/* position:relative; */
-    height: 100vh;
-    background: transparent;
+	position:relative;
+    height: fit-content;
 }
 
 .bg-img {
     width:100%;
     position: relative;
-    height: 100%;
-    background: linear-gradient(
-      rgba(110, 78, 30, 0.4), 
-      rgba(110, 78, 30, 0.4)
-    ),
-    /* url(data:image/png;base64,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), */
-    url(../img/UncleMuskratFatherHennepin.jpg) no-repeat center center;
-    background-size: cover;
-    filter: blur(1px); 
+    text-align: center;
+}
+
+.banner-image {
+    height: fit-content;
+    width: 100%;
+    max-height: 60vh;
+    object-fit: cover;
+    object-position: top;
 }
 
 .bg-content {
@@ -340,7 +341,7 @@ hr {
 }
 
 #intro.intro {
-	padding:0 0 0 0;
+	padding:20px 0 0 0;
 }
 
 .intro .slogan {
@@ -360,38 +361,41 @@ hr {
     font-size: 18px;
 }
 
-.intro .slogan h2 {
-	color: #FFF;
-	text-shadow: none;
-	font-size: 60px;
-	line-height: 60px;
-	font-weight: 700;
-	font-family: Montserrat, sans-serif;
+.intro .slogan h1 {
+	color: #333333;
+	font-size: 8vw;
+	font-family: Ultra, sans-serif;
 	background-color: rgba(0, 0, 0, 0);
 	text-decoration: none;
 	text-transform: uppercase;
 	border-width: 0px;
 	border-color: #000;
 	border-style: none;
-	text-shadow: -1px 0 1px #000;
+	/* text-shadow: -1px 0 1px #000; */
 }
 
 .intro .slogan h4 {
-	color: #fff;
-	text-shadow: -1px 1px 1px #000;
+    font-size: 3vw;
+	color: #333333;
 }
-
+/* 
 @media (max-width: 768px) {
-  .intro .slogan h2 {
-    font-size: 48px;
+  .intro .slogan h1 {
+    font-size: 10vw;
   }
+  .intro .slogan h4 {
+	font-size: 4vw;
+}
 }
 
 @media (max-width: 600px) {
-  .intro .slogan h2 {
-    font-size: 36px;
+  .intro .slogan h1 {
+    font-size: 8vw;
   }
+  .intro .slogan h4 {
+	font-size: 3vw;
 }
+} */
 
 
 /* ===========================
@@ -452,7 +456,7 @@ hr {
 	margin:0;
 	padding:0;
 }
-.team-social .social-facebook a{background: #3873ae;}
+.team-social .social-facebook a{background: #3873ae; margin: auto;}
 .team-social .social-twitter a{background: #62c6f8;}
 .team-social .social-dribble a{background: #d74980;}
 .team-social .social-deviantart a{background: #8da356;}
@@ -505,7 +509,15 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
 }
 
 .widget-contact {
-	text-align: center;
+    text-align: center;
+}
+
+.bit-widget-container {
+    padding: 25px 0;
+}
+
+.container {
+    padding: 0;
 }
 
 .validation {
@@ -547,7 +559,7 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
 }
 
 .company-social {
-	text-align: left;
+	text-align: center;
 }
 
 .company-social li{
@@ -596,7 +608,8 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
 
 footer {
 	text-align: center;
-	padding: 50px 0 ;
+    padding: 20px 0 ;
+    font-family: sans-serif;
 
 }
 
@@ -606,6 +619,7 @@ footer p {
 
 .credits, .credits a {
     color: #fff;
+    font-size: 10px;
 }
 
 /* ==========================
@@ -654,7 +668,7 @@ Parallax
 .btn {
 	border-radius: 0;
     text-transform: uppercase;
-    font-family: Montserrat,sans-serif;
+    font-family: Ultra,sans-serif;
     font-weight: 400;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
@@ -682,7 +696,6 @@ Parallax
     color: #666;
 }
 
-
 .btn-circle:hover,
 .btn-circle:focus {
     outline: 0;
@@ -702,59 +715,6 @@ Parallax
     color: #999;
 }
 
-.page-scroll .btn-circle i.animated {
-    -webkit-transition-property: -webkit-transform;
-    -webkit-transition-duration: 1s;
-    -moz-transition-property: -moz-transform;
-    -moz-transition-duration: 1s;
-}
-
-.page-scroll .btn-circle:hover i.animated {
-    -webkit-animation-name: pulse;
-    -moz-animation-name: pulse;
-    -webkit-animation-duration: 1.5s;
-    -moz-animation-duration: 1.5s;
-    -webkit-animation-iteration-count: infinite;
-    -moz-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-    -moz-animation-timing-function: linear;
-}
-
-@-webkit-keyframes pulse {
-    0 {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
-
-    50% {
-        -webkit-transform: scale(1.2);
-        transform: scale(1.2);
-    }
-
-    100% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
-}
-
-@-moz-keyframes pulse {
-    0 {
-        -moz-transform: scale(1);
-        transform: scale(1);
-    }
-
-    50% {
-        -moz-transform: scale(1.2);
-        transform: scale(1.2);
-    }
-
-    100% {
-        -moz-transform: scale(1);
-        transform: scale(1);
-    }
-}
-
-
 #text {
     color: #fff;
     background: #ffcc00;
@@ -763,7 +723,6 @@ Parallax
 #map {
 	height: 500px;
 }
-
 
 .btn-skin:hover,
 .btn-skin:focus,
@@ -817,7 +776,7 @@ Parallax
     }
 
     .intro {
-        height: 100%;
+        height: fit-content;
         padding: 0;
     }
 
@@ -873,4 +832,8 @@ Parallax
 
 figcaption {
     color: #FFFFFF;
+}
+
+.bit-widget a.bit-top-track-button {
+    display: none;
 }
