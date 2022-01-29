@@ -529,7 +529,6 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 30px;
     padding-bottom: 20px;
 }
 
