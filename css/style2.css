@@ -17,11 +17,13 @@ body {
 	font-weight: 300;
     color: rbg(197, 184, 167);
     background-color: rbg(197, 184, 167);
+    overflow: hidden;
 }
 
 html {
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 h1,
@@ -432,7 +434,8 @@ section {
 .team-social {
 	margin-left: 0;
 	padding-left: 0;
-
+    margin: .5em;
+    border: 1px white;
 }
 
 .team-social {
@@ -465,12 +468,18 @@ section {
 	padding:0;
 }
 .team-social .social-facebook a{background: #3873ae; margin: auto;}
+.team-social .social-instagram a{background: #8134AF; margin: auto;}
+.team-social .social-spotify a{background: #000; margin: auto;}
+.team-social .social-bandsintown a{background: #36aca8f2;; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a{background: #62c6f8;}
 .team-social .social-dribble a{background: #d74980;}
 .team-social .social-deviantart a{background: #8da356;}
 .team-social .social-google a{background: #000;}
 .team-social .social-vimeo a{background: #51a6d3;}
 .team-social .social-facebook a:hover{background: #4893ce;}
+.team-social .social-instagram a:hover{background: #8b4caf; margin: auto;}
+.team-social .social-spotify a:hover{background: #535353; margin: auto;}
+.team-social .social-bandsintown a:hover{background: #74c9c6f2;; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a:hover{background: #82e6ff;}
 .team-social .social-dribble a:hover{background: #f769a0;}
 .team-social .social-deviantart a:hover{background: #adc376;}
@@ -517,7 +526,7 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
 }
 
 .widget-contact {
-    width: 100%;
+    width: 100vw;
     text-align: center;
 }
 
@@ -774,7 +783,7 @@ Parallax
 
 /* Media queries */
 
-@media(min-width:767px) {
+@media(min-width:820px) {
 
     .navbar {
         padding: 20px 0;
@@ -809,9 +818,16 @@ Parallax
         font-size: 25px;
     }
 
+    #sun {
+        top: 50px;
+        right: 70px;
+        width: 15vw;
+        height: 15vw;
+    }
+
 
 }
-@media (max-width:768px) {
+@media (max-width:819px) {
 
 	.team.boxed-grey {
 		margin-bottom: 30px;
@@ -820,6 +836,23 @@ Parallax
 	.boxed-grey {
 		margin-bottom: 30px;
 	}
+
+    #sun {
+        top: 50px;
+        right: 40px;
+        width: 30vw;
+        height: 30vw;
+    }
+
+    .bg-img {
+        line-height: 100vh;
+        width: 150vw;
+        margin: -25vw;
+    }
+
+    .banner-image {
+        margin-top: 30vh;
+    }
 
 
 }
@@ -848,6 +881,24 @@ Parallax
 		font-size: 20px;
 	}
 
+    #sun {
+        top: 67vh;
+        right: 40px;
+        width: 30vw;
+        height: 30vw;
+    }
+
+    .bg-img {
+        line-height: 100vh;
+        width: 150vw;
+        margin: -25vw;
+        line-height: 100vh;
+    }
+
+    .banner-image {
+        margin-top: 20vh;
+    }
+
 }
 
 figcaption {
@@ -860,20 +911,35 @@ figcaption {
 
 #sun {
     position: fixed;
-    top: 40px;
-    right: 50px;
     border-radius: 50%;
     background-color: #dfc712;
     opacity: 75%;
-    width: 15vw;
-    height: 15vw;
+    z-index: 0;
 }
 
 #shows {
     background-color: #9473c4;
+    position: fixed;
+    top: 90vh;
 }
 
 #bg6 {
     position: relative;
     top: -160px;
+}
+
+#contact {
+    position: absolute;
+    bottom: 0px;
+    z-index: 150;
+    padding-bottom: 1em;
+}
+
+#social-links {
+    justify-content: center;
+    padding-bottom: 0;
+}
+
+#booking-link {
+    font-size: 1.2em;
 }
