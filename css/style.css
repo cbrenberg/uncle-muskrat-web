@@ -5,18 +5,25 @@
     Author URL: https://bootstrapmade.com
 */
 
+@font-face {
+    font-family: 'American Typewriter';
+    src: url('../fonts/AmericanTypewriterRegular.ttf') format('truetype');
+}
+
 body {
     width: 100%;
     height: 100%;
-    font-family: 'Ultra',sans-serif;
+    font-family: 'American Typewriter','Ultra',sans-serif;
 	font-weight: 300;
     color: rbg(197, 184, 167);
     background-color: rbg(197, 184, 167);
+    overflow: hidden;
 }
 
 html {
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 h1,
@@ -27,7 +34,7 @@ h5,
 h6 {
     margin: 0 0 10px;
     text-transform: uppercase;
-    font-family: Ultra,sans-serif;
+    font-family: 'American Typewriter','Ultra',sans-serif;
     letter-spacing: 1px;
 }
 
@@ -258,7 +265,7 @@ hr {
 --- General sections
 ============================ */
 section {
-    padding: 0 10px;
+    padding: 0px;
 }
 
 .home-section {
@@ -289,7 +296,7 @@ section {
 }
 
 .bg-sepia {
-    background-color: #e8e4df;
+    background-image: linear-gradient(#c3617d, #dd9e35)
 }
 
 
@@ -324,9 +331,12 @@ section {
 .banner-image {
     /* height: fit-content; */
     width: 100%;
-    max-height: 60vh;
+    opacity: 75%;
+    /* max-height: 60vh; */
     object-fit: cover;
     object-position: top;
+    -webkit-filter: drop-shadow(4px 3px 7px #222);
+    filter: drop-shadow(4px 3px 7px #222);
 }
 
 .bg-content {
@@ -364,7 +374,7 @@ section {
 .intro .slogan h1 {
 	color: #333333;
 	font-size: 8vw;
-	font-family: Ultra, sans-serif;
+	font-family: 'American Typewriter','Ultra',sans-serif;
 	background-color: rgba(0, 0, 0, 0);
 	text-decoration: none;
 	text-transform: uppercase;
@@ -424,7 +434,8 @@ section {
 .team-social {
 	margin-left: 0;
 	padding-left: 0;
-
+    margin: .5em;
+    border: 1px white;
 }
 
 .team-social {
@@ -457,12 +468,18 @@ section {
 	padding:0;
 }
 .team-social .social-facebook a{background: #3873ae; margin: auto;}
+.team-social .social-instagram a{background: #8134AF; margin: auto;}
+.team-social .social-spotify a{background: #000; margin: auto;}
+.team-social .social-bandsintown a{background: #36aca8f2;; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a{background: #62c6f8;}
 .team-social .social-dribble a{background: #d74980;}
 .team-social .social-deviantart a{background: #8da356;}
 .team-social .social-google a{background: #000;}
 .team-social .social-vimeo a{background: #51a6d3;}
 .team-social .social-facebook a:hover{background: #4893ce;}
+.team-social .social-instagram a:hover{background: #8b4caf; margin: auto;}
+.team-social .social-spotify a:hover{background: #535353; margin: auto;}
+.team-social .social-bandsintown a:hover{background: #74c9c6f2;; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a:hover{background: #82e6ff;}
 .team-social .social-dribble a:hover{background: #f769a0;}
 .team-social .social-deviantart a:hover{background: #adc376;}
@@ -509,7 +526,7 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
 }
 
 .widget-contact {
-    width: 100%;
+    width: 100vw;
     text-align: center;
 }
 
@@ -680,7 +697,7 @@ Parallax
 .btn {
 	border-radius: 0;
     text-transform: uppercase;
-    font-family: Ultra,sans-serif;
+    font-family: 'American Typewriter','Ultra',sans-serif;
     font-weight: 400;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
@@ -766,7 +783,7 @@ Parallax
 
 /* Media queries */
 
-@media(min-width:767px) {
+@media(min-width:820px) {
 
     .navbar {
         padding: 20px 0;
@@ -801,9 +818,16 @@ Parallax
         font-size: 25px;
     }
 
+    #sun {
+        top: 50px;
+        right: 70px;
+        width: 15vw;
+        height: 15vw;
+    }
+
 
 }
-@media (max-width:768px) {
+@media (max-width:819px) {
 
 	.team.boxed-grey {
 		margin-bottom: 30px;
@@ -812,6 +836,23 @@ Parallax
 	.boxed-grey {
 		margin-bottom: 30px;
 	}
+
+    #sun {
+        top: 50px;
+        right: 40px;
+        width: 30vw;
+        height: 30vw;
+    }
+
+    .bg-img {
+        line-height: 100vh;
+        width: 150vw;
+        margin: -25vw;
+    }
+
+    .banner-image {
+        margin-top: 30vh;
+    }
 
 
 }
@@ -840,6 +881,24 @@ Parallax
 		font-size: 20px;
 	}
 
+    #sun {
+        top: 67vh;
+        right: 40px;
+        width: 30vw;
+        height: 30vw;
+    }
+
+    .bg-img {
+        line-height: 100vh;
+        width: 150vw;
+        margin: -25vw;
+        line-height: 100vh;
+    }
+
+    .banner-image {
+        margin-top: 20vh;
+    }
+
 }
 
 figcaption {
@@ -848,4 +907,39 @@ figcaption {
 
 .bit-widget a.bit-top-track-button {
     display: none;
+}
+
+#sun {
+    position: fixed;
+    border-radius: 50%;
+    background-color: #dfc712;
+    opacity: 75%;
+    z-index: 0;
+}
+
+#shows {
+    background-color: #9473c4;
+    position: fixed;
+    top: 90vh;
+}
+
+#bg6 {
+    position: relative;
+    top: -160px;
+}
+
+#contact {
+    position: absolute;
+    bottom: 0px;
+    z-index: 150;
+    padding-bottom: 1em;
+}
+
+#social-links {
+    justify-content: center;
+    padding-bottom: 0;
+}
+
+#booking-link {
+    font-size: 1.2em;
 }
