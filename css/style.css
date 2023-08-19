@@ -356,7 +356,8 @@ section {
 
 .intro .slogan {
 	text-align: center;
-
+    -webkit-filter: drop-shadow(3px 4px 7px #565656);
+    filter: drop-shadow(3px 4px 7px #565656);
 }
 
 .intro .page-scroll {
@@ -372,7 +373,7 @@ section {
 }
 
 .intro .slogan h1 {
-	color: #333333;
+	color: #f1dbda;
 	font-size: 8vw;
 	font-family: 'American Typewriter','Ultra',sans-serif;
 	background-color: rgba(0, 0, 0, 0);
@@ -386,7 +387,7 @@ section {
 
 .intro .slogan h4 {
     font-size: 3vw;
-	color: #333333;
+	color: #f1dbda;
 }
 /* 
 @media (max-width: 768px) {
@@ -470,21 +471,21 @@ section {
 .team-social .social-facebook a{background: #3873ae; margin: auto;}
 .team-social .social-instagram a{background: #8134AF; margin: auto;}
 .team-social .social-spotify a{background: #000; margin: auto;}
-.team-social .social-bandsintown a{background: #36aca8f2;; margin: auto; padding-top: 3px;}
+.team-social .social-bandsintown a{background: #36aca8f2; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a{background: #62c6f8;}
-.team-social .social-dribble a{background: #d74980;}
-.team-social .social-deviantart a{background: #8da356;}
-.team-social .social-google a{background: #000;}
-.team-social .social-vimeo a{background: #51a6d3;}
+.team-social .social-com a{background: #d74980; margin: auto;}
+/* .team-social .social-deviantart a{background: #8da356;} */
+/* .team-social .social-google a{background: #000;} */
+/* .team-social .social-vimeo a{background: #51a6d3;} */
 .team-social .social-facebook a:hover{background: #4893ce;}
 .team-social .social-instagram a:hover{background: #8b4caf; margin: auto;}
 .team-social .social-spotify a:hover{background: #535353; margin: auto;}
 .team-social .social-bandsintown a:hover{background: #74c9c6f2;; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a:hover{background: #82e6ff;}
-.team-social .social-dribble a:hover{background: #f769a0;}
-.team-social .social-deviantart a:hover{background: #adc376;}
-.team-social .social-google a:hover{background: #333;}
-.team-social .social-vimeo a:hover{background: #71c6f3;}
+.team-social .social-com a:hover{background: #f769a0; margin: auto;}
+/* .team-social .social-deviantart a:hover{background: #adc376;} */
+/* .team-social .social-google a:hover{background: #333;} */
+/* .team-social .social-vimeo a:hover{background: #71c6f3;} */
 
 
 /* ===========================
@@ -923,9 +924,14 @@ figcaption {
     top: 90vh;
 }
 
+#footer {
+    position: fixed;
+    top: 90vh;
+}
+
 #bg6 {
     position: relative;
-    top: -160px;
+    bottom: 100px;
 }
 
 #contact {
@@ -942,4 +948,21 @@ figcaption {
 
 #booking-link {
     font-size: 1.2em;
+    margin-bottom: .5em;
+}
+
+#link-list .team-social a {
+    border-radius: 4px;
+    height: 3em;
+    width: 50vw;
+    filter: drop-shadow(2px 3px 6px #555)
+}
+
+#link-list address {
+    margin: 2em 0;
+}
+
+#link-list address div a i {
+    line-height: 3.75em;
+    height: 100%;
 }
