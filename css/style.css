@@ -356,7 +356,6 @@ section {
 
 .intro .slogan {
 	text-align: center;
-
 }
 
 .intro .page-scroll {
@@ -470,7 +469,7 @@ section {
 .team-social .social-facebook a{background: #3873ae; margin: auto;}
 .team-social .social-instagram a{background: #8134AF; margin: auto;}
 .team-social .social-spotify a{background: #000; margin: auto;}
-.team-social .social-bandsintown a{background: #36aca8f2;; margin: auto; padding-top: 3px;}
+.team-social .social-bandsintown a{background: #36aca8f2; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a{background: #62c6f8;}
 .team-social .social-dribble a{background: #d74980;}
 .team-social .social-deviantart a{background: #8da356;}

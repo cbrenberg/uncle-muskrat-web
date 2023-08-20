@@ -1,0 +1,159 @@
+/* ===========================
+--- Intro
+============================ */
+
+#layout-header {
+	width:100%;
+    padding:20px 0 0 0;
+    flex-shrink: 0;
+}
+
+#layout-header .slogan {
+	text-align: center;
+    -webkit-filter: drop-shadow(3px 4px 7px #565656);
+    filter: drop-shadow(3px 4px 7px #565656);
+}
+
+#layout-header .page-scroll {
+	text-align: center;
+}
+
+#layout-header .slogan h1 {
+	color: #f1dbda;
+	font-size: 8vw;
+	font-family: 'American Typewriter','Ultra',sans-serif;
+	background-color: rgba(0, 0, 0, 0);
+	text-decoration: none;
+	text-transform: uppercase;
+	border-width: 0px;
+	border-color: #000;
+	border-style: none;
+	/* text-shadow: -1px 0 1px #000; */
+}
+
+#layout-header .slogan h4 {
+    font-size: 3vw;
+	color: #f1dbda;
+}
+
+.link {
+    text-align: center;
+	margin-left: 0;
+	padding-left: 0;
+    margin: .5em;
+    border: 1px white;
+    min-width: fit-content;
+}
+
+.link a{
+	margin:0;
+	padding:0;
+    display: block;
+	width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: #000;
+	color: #fff;
+    -webkit-transition: background .3s ease-in-out;
+    transition: background .3s ease-in-out;
+    font-weight: 400;
+}
+
+.link a i{
+	text-align: center;
+	margin:0;
+	padding:0;
+}
+.link .social-facebook a{background: #3873ae; margin: auto;}
+.link .social-instagram a{background: #8134AF; margin: auto;}
+.link .social-spotify a{background: #000; margin: auto;}
+.link .social-bandsintown a{background: #36aca8f2; margin: auto; padding-top: 3px;}
+.link .social-twitter a{background: #62c6f8;}
+.link .social-com a{background: #d74980; margin: auto;}
+/* .link .social-deviantart a{background: #8da356;} */
+/* .link .social-google a{background: #000;} */
+/* .link .social-vimeo a{background: #51a6d3;} */
+.link .social-facebook a:hover{background: #4893ce;}
+.link .social-instagram a:hover{background: #8b4caf; margin: auto;}
+.link .social-spotify a:hover{background: #535353; margin: auto;}
+.link .social-bandsintown a:hover{background: #74c9c6f2;; margin: auto; padding-top: 3px;}
+.link .social-twitter a:hover{background: #82e6ff;}
+.link .social-com a:hover{background: #f769a0; margin: auto;}
+/* .link .social-deviantart a:hover{background: #adc376;} */
+/* .link .social-google a:hover{background: #333;} */
+/* .link .social-vimeo a:hover{background: #71c6f3;} */
+
+#layout-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+#layout-body {
+    flex-grow: 1;
+    overflow: auto;
+    min-height: 2em;
+    padding-bottom: 18vh;
+}
+
+#layout-footer {
+    position: fixed;
+    bottom: 0;
+    height: 18vh;
+    background-color: transparent;
+    overflow: hidden;
+    background-image: url("../img/bg6.png");
+}
+
+#link-list .link a {
+    border-radius: 4px;
+    height: 3em;
+    width: 50vw;
+    filter: drop-shadow(2px 3px 6px #555);
+    text-transform: uppercase;
+    min-width: fit-content;
+    padding: 0 1em;
+}
+
+#link-list address {
+    margin: 2em 0;
+}
+
+#link-list address div a i {
+    line-height: 3.75em;
+    height: 100%;
+}
+
+/* Media queries */
+
+@media(min-width:820px) {
+
+    #sun {
+        top: 50px;
+        right: 70px;
+        width: 15vw;
+        height: 15vw;
+    }
+}
+
+@media (max-width:819px) {
+
+    #sun {
+        top: 50px;
+        right: 40px;
+        width: 30vw;
+        height: 30vw;
+    }
+}
+
+@media (max-width:480px) {
+
+    #sun {
+        top: 67vh;
+        right: 40px;
+        width: 30vw;
+        height: 30vw;
+    }
+}
