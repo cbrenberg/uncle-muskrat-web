@@ -356,8 +356,6 @@ section {
 
 .intro .slogan {
 	text-align: center;
-    -webkit-filter: drop-shadow(3px 4px 7px #565656);
-    filter: drop-shadow(3px 4px 7px #565656);
 }
 
 .intro .page-scroll {
@@ -473,7 +471,7 @@ section {
 .team-social .social-spotify a{background: #000; margin: auto;}
 .team-social .social-bandsintown a{background: #36aca8f2; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a{background: #62c6f8;}
-.team-social .social-dribble a{background: #d74980; margin: auto;}
+.team-social .social-dribble a{background: #d74980;}
 .team-social .social-deviantart a{background: #8da356;}
 .team-social .social-google a{background: #000;}
 .team-social .social-vimeo a{background: #51a6d3;}
@@ -482,7 +480,7 @@ section {
 .team-social .social-spotify a:hover{background: #535353; margin: auto;}
 .team-social .social-bandsintown a:hover{background: #74c9c6f2;; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a:hover{background: #82e6ff;}
-.team-social .social-dribble a:hover{background: #f769a0; margin: auto;}
+.team-social .social-dribble a:hover{background: #f769a0;}
 .team-social .social-deviantart a:hover{background: #adc376;}
 .team-social .social-google a:hover{background: #333;}
 .team-social .social-vimeo a:hover{background: #71c6f3;}
@@ -943,9 +941,4 @@ figcaption {
 
 #booking-link {
     font-size: 1.2em;
-    margin-bottom: .5em;
-}
-
-#link-list .team-social a {
-    border-radius: 4px;
 }
