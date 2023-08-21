@@ -1,6 +1,10 @@
 html {
     width: 100%;
+    position: fixed;
     height: 100%;
+    /* next two lines fix iphone/ipad viewport scrolling bug */
+    /* height: -webkit-fill-available;
+    min-height: 100vh; */
 }
 
 @font-face {
@@ -12,10 +16,14 @@ html {
 
 body {
     font-family: 'American Typewriter','Ultra',sans-serif;
-	font-weight: 300;
+	  font-weight: 300;
     color: rbg(197, 184, 167);
     background-color: rbg(197, 184, 167);
+    position: fixed;
     height: 100%;
+    /* next two lines fix iphone/ipad viewport scrolling bug */
+    /* min-height: 100vh;
+    min-height: -webkit-fill-available; */
 }
 
 .container {
