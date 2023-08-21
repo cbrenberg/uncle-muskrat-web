@@ -21,6 +21,7 @@ body {
     background-color: rbg(197, 184, 167);
     position: fixed;
     height: 100%;
+    width: 100%;
     /* next two lines fix iphone/ipad viewport scrolling bug */
     /* min-height: 100vh;
     min-height: -webkit-fill-available; */
