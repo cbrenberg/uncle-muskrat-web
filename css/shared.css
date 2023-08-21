@@ -1,11 +1,7 @@
 html {
     width: 100%;
-    /* position: fixed; */
     height: 100%;
     overflow-y: hidden;
-    /* next two lines fix iphone/ipad viewport scrolling bug */
-    /* height: -webkit-fill-available;
-    min-height: 100vh; */
 }
 
 @font-face {
@@ -24,9 +20,6 @@ body {
     height: 100%;
     overflow-y: hidden;
     width: 100%;
-    /* next two lines fix iphone/ipad viewport scrolling bug */
-    /* min-height: 100vh;
-    min-height: -webkit-fill-available; */
 }
 
 .container {
