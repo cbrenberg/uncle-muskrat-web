@@ -68,18 +68,20 @@
 .link .social-facebook a{background: #3873ae; margin: auto;}
 .link .social-instagram a{background: #8134AF; margin: auto;}
 .link .social-spotify a{background: #000; margin: auto;}
-.link .social-bandsintown a{background: #36aca8f2; margin: auto; padding-top: 3px;}
+.link .social-bandsintown a{background: #36aca8f2; margin: auto; }
 .link .social-twitter a{background: #62c6f8;}
 .link .social-com a{background: #d74980; margin: auto;}
+.link .social-xmas a{background: green; margin: auto;}
 /* .link .social-deviantart a{background: #8da356;} */
 /* .link .social-google a{background: #000;} */
 /* .link .social-vimeo a{background: #51a6d3;} */
 .link .social-facebook a:hover{background: #4893ce;}
 .link .social-instagram a:hover{background: #8b4caf; margin: auto;}
 .link .social-spotify a:hover{background: #535353; margin: auto;}
-.link .social-bandsintown a:hover{background: #74c9c6f2;; margin: auto; padding-top: 3px;}
+.link .social-bandsintown a:hover{background: #74c9c6f2; margin: auto; }
 .link .social-twitter a:hover{background: #82e6ff;}
 .link .social-com a:hover{background: #f769a0; margin: auto;}
+.link .social-xmas a:hover{background: red; margin: auto;}
 /* .link .social-deviantart a:hover{background: #adc376;} */
 /* .link .social-google a:hover{background: #333;} */
 /* .link .social-vimeo a:hover{background: #71c6f3;} */
