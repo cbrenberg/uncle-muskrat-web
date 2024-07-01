@@ -38,22 +38,30 @@
 
   <!-- Section: intro -->
   <section id="intro" class="intro">
+    
     <div class="bg-img">
-      <img src="img/banner_shrunk.png" class="banner-image" />
+      <h1><img src="img/banner_shrunk.png" class="banner-image" alt="Uncle Muskrat"/></h1>
+    </div>
+    <div id="main-content">
+      <h2>Shows</h2>
+      <div class="col-6 bandsintown">
+          <script charset="utf-8" src="https://widget.bandsintown.com/main.min.js"></script>
+          <a class="bit-widget-initializer" data-artist-name="id_15394482" data-font="'American Typewriter', 'Ultra', sans-serif" data-language="en"
+            data-display-details="false" data-text-color="#FFFFFF" data-display-logo="false"
+            data-separator-color="#FFFFFF" data-popup-background-color="#ffffff" data-link-color="#f769a0"
+            data-link-text-color="#FFFFFF" data-display-play-my-city="false"></a>
+        </div>
+      <div id="youtube-embed" class="col-6">
+        <h2>Media</h2>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=mqbKj9-F-2SrnYC8&amp;list=PLg6ugZZhPvOGj6RbmeKoGmIBG9j5WVP4z" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
     </div>
     <div id="sun"></div>
-    <!-- <div class="">
-      <div class="slogan">
-        <h1>UNCLE <span class="text_color">MUSKRAT</span> </h1>
-        <h4>modern sounds in mountain music</h4>
-      </div>
-    </div> -->
   </section>
   <!-- /Section: intro -->
 
   <section id="contact" class="home-section text-center">
     <div class="col widget-contact">
-      <!-- <h4>Get in touch</h4> -->
       <div id="social-links" class="container flex col-6">
         <address class="team-social">
           <div class="social-facebook"><a href="https://www.facebook.com/unclemuskrat/" target="_blank"><i
@@ -66,6 +74,10 @@
         <address class="team-social">
           <div class="social-spotify"><a href="https://open.spotify.com/artist/6wQ3Iph052h2tEVeXWaiDh" target="_blank"><i
                 class="fa fa-lg fa-spotify"></i></a></div>
+        </address>
+        <address class="team-social">
+          <div class="social-youtube"><a href="https://www.youtube.com/@unclemuskrat" target="_blank"><i
+                class="fa fa-lg fa-youtube"></i></a></div>
         </address>
         <address class="team-social">
           <div class="social-bandsintown"><a href="https://bnds.us/j6qlrh" target="_blank">
@@ -81,9 +93,10 @@
         </address>
       </div>
       
-      <address id="booking-link">
+      <address class="booking-link">
         <a href="mailto:booking@unclemuskrat.com">booking@unclemuskrat.com</a>
       </address>
+      <div class="booking-link"><a href="./assets/uncle-muskrat-epk.pdf" target="_blank">Electronic Press Kit</a></div>
     </div>
   </section>
 
