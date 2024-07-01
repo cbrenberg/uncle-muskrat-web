@@ -33,9 +33,10 @@ h4,
 h5,
 h6 {
     margin: 0 0 10px;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     font-family: 'American Typewriter','Ultra',sans-serif;
-    letter-spacing: 1px;
+    /* letter-spacing: 1px; */
+    color: #FFFFFF;
 }
 
 p {
@@ -329,10 +330,10 @@ section {
 }
 
 .banner-image {
-    /* height: fit-content; */
-    width: 100%;
-    opacity: 75%;
-    /* max-height: 60vh; */
+    height: 40vh;
+    /* width: 100%; */
+    opacity: 90%;
+    /* max-height: 40vh; */
     object-fit: cover;
     object-position: top;
     -webkit-filter: drop-shadow(4px 3px 7px #222);
@@ -360,6 +361,20 @@ section {
 
 .intro .page-scroll {
 	text-align: center;
+}
+
+.intro #main-content {
+    width: 100%;
+    position: relative;
+    text-align: center;
+    overflow-y: scroll;
+    padding-right: 17px;
+    box-sizing: content-box;
+    height: 40vh;
+}
+
+.intro #main-content > div:last-of-type {
+    padding-bottom: 5vh;
 }
 
 .brand-heading {
@@ -469,6 +484,7 @@ section {
 .team-social .social-facebook a{background: #3873ae; margin: auto;}
 .team-social .social-instagram a{background: #8134AF; margin: auto;}
 .team-social .social-spotify a{background: #000; margin: auto;}
+.team-social .social-youtube a{background: #a14242; margin: auto;}
 .team-social .social-bandsintown a{background: #36aca8f2; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a{background: #62c6f8;}
 .team-social .social-dribble a{background: #d74980;}
@@ -478,6 +494,7 @@ section {
 .team-social .social-facebook a:hover{background: #4893ce;}
 .team-social .social-instagram a:hover{background: #8b4caf; margin: auto;}
 .team-social .social-spotify a:hover{background: #535353; margin: auto;}
+.team-social .social-youtube a:hover{background: #be5757; margin: auto;}
 .team-social .social-bandsintown a:hover{background: #74c9c6f2;; margin: auto; padding-top: 3px;}
 .team-social .social-twitter a:hover{background: #82e6ff;}
 .team-social .social-dribble a:hover{background: #f769a0;}
@@ -531,6 +548,11 @@ form#contact-form input:focus,form#contact-form select:focus,form#contact-form t
 
 .bandsintown, .spotify {
     flex-grow: 1;
+}
+
+.bandsintown {
+    margin: auto;
+    width: 75%;
 }
 
 .bit-widget-container {
@@ -844,16 +866,34 @@ Parallax
     }
 
     .bg-img {
-        line-height: 100vh;
+        /* line-height: 100vh; */
         width: 150vw;
         margin: -25vw;
     }
 
     .banner-image {
-        margin-top: 30vh;
+        margin-top: 10vh;
+        width: 100%;
+        height: auto;
     }
 
+    #intro.intro {
+        height: 100%;
+    }
 
+    .intro #main-content {
+        width: 100vw;
+        height: 80vh;
+        margin-top: 15vh;
+    }
+
+    .intro #main-content > div:last-of-type {
+        margin-bottom: 40vh;
+    }
+
+    #youtube-embed > iframe {
+        max-width: 100%;
+    }
 }
 
 @media (max-width:480px) {
@@ -888,14 +928,27 @@ Parallax
     }
 
     .bg-img {
-        line-height: 100vh;
         width: 150vw;
         margin: -25vw;
-        line-height: 100vh;
     }
 
     .banner-image {
-        margin-top: 20vh;
+        margin-top: 10vh;
+    }
+
+    .intro #main-content {
+        width: 100vw;
+        height: 60vh;
+        margin-top: 10vh;
+    }
+
+    .intro #main-content > div:last-of-type {
+        margin-bottom: 20vh;
+    }
+
+    #youtube-embed > iframe {
+        max-width: 100%;
+        height: auto;
     }
 
 }
@@ -913,7 +966,7 @@ figcaption {
     border-radius: 50%;
     background-color: #dfc712;
     opacity: 75%;
-    z-index: 0;
+    z-index: -1;
 }
 
 #shows {
@@ -939,6 +992,19 @@ figcaption {
     padding-bottom: 0;
 }
 
-#booking-link {
+#contact .booking-link {
     font-size: 1.2em;
+}
+
+#contact address.booking-link {
+    font-size: 1.2em;
+    margin-bottom: 0;
+}
+
+.bandsintown div.bit-nav-bar-container {
+    display: none;
+}
+
+.bandsintown .bit-widget div.bit-no-dates-container {
+    border-top: none;
 }
