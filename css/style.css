@@ -801,47 +801,6 @@ Parallax
     margin-top: 0;
 }
 
-/* Styles for the modal */
-  .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 175; /* Sit on top */
-    height: 100%; /* Full height */
-    width: 100%; /* Full width */
-    top: 0; /* Stay at the top */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
-  }
-
-  .modal-content-custom {
-    background-color: #f3deb6;
-    /*margin: 5% auto; /* 5% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    /* width: 80%; Could be more or less, depending on screen size */
-    position: fixed;
-    max-width: 80vw;
-    max-height: 80vh;
-    transform: translate(-50%, -50%);
-    left: 50vw;
-    top: 50vh;
-  }
-
-  .modal-close {
-    color: #aaa;
-    float: right;
-    font-size: 36px;
-    font-weight: bold;
-    margin: 10px 10px;
-  }
-
-  .modal-close:hover,
-  .modal-close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
 
 /* Media queries */
 
@@ -1019,7 +978,6 @@ figcaption {
 #bg6 {
     position: relative;
     top: -160px;
-    filter: drop-shadow(4px 3px 7px #222);
 }
 
 #contact {
