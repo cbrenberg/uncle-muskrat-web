@@ -1,0 +1,380 @@
+/* =================================================================
+   Uncle Muskrat — rising-terrain reveal
+   On load, three ridge headers (bg1 / bg3 / bg5) are stacked at the
+   bottom as a twilight range. Scrolling raises them one at a time,
+   back to front: each ridge lifts up and off the top, revealing its
+   section's content beneath. A risen ridge is gone — only content
+   remains. JS (js/scroll.js) scrubs the transforms; this file also
+   provides a static fallback when motion is reduced / JS is off.
+   ================================================================= */
+
+/* Bundled brand font so it renders everywhere (not just on machines
+   that happen to have American Typewriter installed). */
+@font-face {
+  font-family: 'American Typewriter';
+  src: url('../fonts/AmericanTypewriterRegular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Darkest ridge sits in front; image numbers ascend front -> back.
+     The back layer reveals first, the front layer last. */
+  --bg5: #615CBF;  /* Shows   (layer 0, back, lightest) */
+  --bg4: #564CAE;  /* Bio     (layer 1)                 */
+  --bg3: #1F2B84;  /* Media   (layer 2)                 */
+  --bg2: #091671;  /* Contact (layer 3, front, darkest) */
+  --ink: #ffffff;
+  --footer-deep: #2a2150;
+  /* original pre-redesign sunset (.bg-sepia) */
+  --sunset: linear-gradient(#c3617d, #dd9e35);
+  --serif: 'American Typewriter', Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  background: var(--sunset);
+}
+
+img { max-width: 100%; }
+
+/* =================================================================
+   Shared content styling (used by both layouts)
+   ================================================================= */
+.layer__ridge {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Overlap the content by a few px so the image's 1px anti-aliased
+     bottom edge (alpha ~241) is covered by the opaque, matching-color
+     content instead of compositing the background through it (which
+     otherwise shows a faint seam on the rear-most layer over the sky). */
+  margin-bottom: -4px;
+  pointer-events: none;
+  /* Subtle drop shadow cast upward so it sits along the top ridgeline,
+     then clip everything at/below the image's bottom edge so no shadow
+     bleeds onto the content div beneath it. (clip-path is applied after
+     filter, so it trims the shadow; sides/top are left open.) */
+  -webkit-filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  -webkit-clip-path: inset(-160px -120px 0 -120px);
+  clip-path: inset(-160px -120px 0 -120px);
+}
+
+.content--shows   { background: var(--bg5); }
+.content--bio     { background: var(--bg4); }
+.content--media   { background: var(--bg3); }
+.content--contact { background: linear-gradient(to bottom, var(--bg2) 0%, var(--footer-deep) 100%); }
+
+.content__inner {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 6vh 6vw;
+  text-align: center;
+}
+
+.content__heading {
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.8em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.stage__logo { text-align: center; }
+.stage__logo img {
+  width: min(620px, 80vw);
+  height: auto;
+  /* original logo drop shadow */
+  -webkit-filter: drop-shadow(4px 3px 7px #222);
+  filter: drop-shadow(4px 3px 7px #222);
+}
+
+/* =================================================================
+   Static fallback (no .js-reveal): a clean stacked page
+   ================================================================= */
+.stage__logo {
+  padding: 14vh 6vw 8vh;
+}
+
+.layer__content { min-height: 60vh; display: flex; align-items: center; }
+
+/* =================================================================
+   Scroll-reveal layout (.js-reveal)
+   ================================================================= */
+.js-reveal #reveal-track { position: relative; }   /* height set by JS */
+
+.js-reveal #stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--sunset);
+}
+
+.js-reveal .stage__logo {
+  position: absolute;
+  top: 33%;                 /* about a third of the way down */
+  left: 50%;
+  width: min(90vw, 820px);  /* prominent on desktop and mobile */
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  z-index: 0;               /* behind the layers, so content covers it on scroll */
+  padding: 0;
+  will-change: transform, opacity;
+}
+
+.js-reveal .stage__logo img {
+  display: block;
+  width: 100%;
+  height: auto;             /* keep the original image's aspect ratio */
+}
+
+.js-reveal .layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* No will-change / 3D transform here: forcing a permanent GPU layer
+     makes Chrome drop subpixel text antialiasing (text looks heavier /
+     edges blend). The 2D translateY set by JS lets text stay crisp. */
+}
+
+/* later-revealed layers paint over earlier ones during transitions */
+.js-reveal .layer[data-i="0"] { z-index: 1; }
+.js-reveal .layer[data-i="1"] { z-index: 2; }
+.js-reveal .layer[data-i="2"] { z-index: 3; }
+.js-reveal .layer[data-i="3"] { z-index: 4; }
+
+/* Decorative, non-scrolling ridges that only enrich the on-load range.
+   bg6 sits at the back (content covers it as it rises); bg1 stays in
+   front at the bottom through all scrolling. Hidden in the static
+   fallback. They are NOT .layer elements, so the scrub ignores them. */
+.terrain { display: none; }
+
+.js-reveal .terrain {
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  -webkit-filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  -webkit-clip-path: inset(-160px -120px 0 -120px);
+  clip-path: inset(-160px -120px 0 -120px);
+}
+
+/* behind every content layer; cap height on wide screens (crop the solid
+   base, keep the silhouette) so bg6 doesn't balloon at full desktop width */
+.js-reveal .terrain--back {
+  z-index: 0;
+  min-height: 36vh;   /* stay visible (and above bg5) on narrow screens */
+  max-height: 36vh;   /* but don't balloon on wide desktops */
+  object-fit: cover;
+  object-position: top center;
+}
+.js-reveal .terrain--front {
+  z-index: 10;          /* always in front, at the bottom */
+  bottom: -5vh;         /* sits a bit low on desktop */
+  min-height: 18vh;     /* stays visible on narrow / mobile screens */
+  object-fit: cover;
+  object-position: top center;
+}
+
+.js-reveal .layer__content {
+  /* slightly over 100vh so the settled content (shifted up a couple px to
+     clear the ridge) still covers the very bottom — no sliver of background */
+  min-height: calc(100vh + 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* keep content clear of lower ridges still stacked at the bottom */
+.js-reveal .content--shows .content__inner,
+.js-reveal .content--bio .content__inner {
+  padding-bottom: 40vh;
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 4vh;
+  left: 50%;
+  z-index: 21;
+  transform: translateX(-50%);
+  display: block;
+  width: 34px;
+  height: 34px;
+  animation: bob 1.8s ease-in-out infinite;
+}
+
+.scroll-cue__chevron {
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0 auto;
+  border-right: 3px solid rgba(255, 255, 255, 0.85);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.85);
+  transform: rotate(45deg);
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* =================================================================
+   Bio grid
+   ================================================================= */
+.bio__blurb {
+  max-width: 640px;
+  margin: 0 auto 2em;
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  line-height: 1.6;
+}
+
+.bio__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: clamp(12px, 3vw, 26px);
+}
+
+.bio__member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55em;
+}
+
+.bio__photo {
+  width: 100%;
+  max-width: 160px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.bio__photo--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 2.4rem;
+  box-shadow: none;
+}
+
+.bio__name {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* =================================================================
+   Media
+   ================================================================= */
+.media__video {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.6em;
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.media__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.media__gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 2vw, 18px);
+}
+
+.media__shot {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+.media__shot img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.media__shot:hover img { transform: scale(1.05); }
+
+/* =================================================================
+   Contact (now the 4th terrain layer — see .content--contact above)
+   ================================================================= */
+.contact__social {
+  display: flex;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 34px);
+  margin-bottom: 1.6em;
+}
+
+.contact__social a {
+  color: var(--ink);
+  font-size: 1.8rem;
+  line-height: 1;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.contact__social a:hover { opacity: 0.7; transform: translateY(-3px); }
+.contact__social svg { width: 1.6rem; height: 1.6rem; vertical-align: middle; }
+
+.contact__booking a,
+.contact__epk a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.contact__booking { font-style: normal; font-size: 1.25rem; margin-bottom: 0.8em; }
+.contact__epk { margin-bottom: 2em; }
+.contact__booking a:hover,
+.contact__epk a:hover { border-bottom-color: var(--ink); }
+
+.contact__copy { font-size: 0.85rem; opacity: 0.7; margin: 0; }
+
+/* =================================================================
+   Responsive / reduced motion
+   ================================================================= */
+@media (max-width: 768px) {
+  .media__gallery { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .scroll-cue { animation: none; }
+}
