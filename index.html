@@ -3,9 +3,12 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <!-- viewport-fit=cover lets the page paint into the notch and home-indicator
+       strips, so those blend with whatever layer is at that edge instead of
+       Safari picking a fill colour for them. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Uncle Muskrat — official site. Shows, music, and media.">
+  <meta name="author" content="Uncle Muskrat">
 
   <!-- Favicons -->
   <link rel="apple-touch-icon" sizes="180x180" href="img/icons/favicon_io/apple-touch-icon.png">
@@ -15,141 +18,152 @@
 
   <title>Uncle Muskrat</title>
 
-  <!-- Bootstrap Core CSS -->
-  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
-
-  <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ultra">
+  <!-- Icons (brand font is bundled via @font-face in css/refresh.css) -->
   <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <link href="css/animate.css" rel="stylesheet" />
-  <!-- Squad theme CSS -->
-  <link href="css/style.css" rel="stylesheet">
-  <link href="color/default.css" rel="stylesheet">
 
+  <!-- Site styles -->
+  <link href="css/refresh.css" rel="stylesheet">
 </head>
 
-<body id="page-top" class="bg-sepia">
-  <!-- Preloader -->
-  <div id="preloader">
-    <div id="load"></div>
-  </div>
+<body id="page-top">
 
-  <!-- <div class="modal" id="myModal">
-    <span>
-      <span class="modal-close" id="close">&times;</span>
-      <img class="modal-content-custom" src="img/TODO" alt="TODO" id="tour-image" />
-    </span>
-  </div> -->
+  <!-- The ridge headers rest stacked at the bottom of the viewport as a range.
+       Each one is bottom-sticky: it is held there until the page has scrolled
+       far enough for its own place in the document to arrive, at which point it
+       releases and scrolls off the top with its section. No scripting — every
+       moving thing moves 1:1 with the scroll. -->
+  <div id="page">
 
-  <!-- Section: intro -->
-  <section id="intro" class="intro">
-    
-    <div class="bg-img">
-      <h1><img src="img/banner_shrunk.png" class="banner-image" alt="Uncle Muskrat"/></h1>
-    </div>
-    <div id="main-content">
-      <h2>Shows</h2>
-      <div class="col-6 bandsintown">
+    <!-- Decorative back ridge (bg6): held at the bottom of the viewport behind
+         everything else, so it fills out the range on load and is then covered
+         up as each section scrolls over it. Declared before the logo so the
+         logo always paints on top. -->
+    <img class="terrain terrain--back" src="img/bg6.png" width="1920" height="570" alt="" aria-hidden="true">
+
+    <header id="hero">
+      <div class="hero__logo">
+        <img src="img/banner_shrunk.png" width="1920" height="840" alt="Uncle Muskrat">
+      </div>
+    </header>
+
+    <!-- Shows — back ridge (bg5, lightest) -->
+    <div class="ridge ridge--shows" aria-hidden="true"><img src="img/bg5.png" width="1920" height="535" alt=""></div>
+    <section id="shows" class="content content--shows">
+      <div class="content__inner">
+        <h2 class="content__heading">Shows</h2>
+        <div class="bandsintown">
           <script charset="utf-8" src="https://widget.bandsintown.com/main.min.js"></script>
-          <a class="bit-widget-initializer" data-artist-name="id_15394482" data-font="'American Typewriter', 'Ultra', sans-serif" data-language="en"
+          <a class="bit-widget-initializer" data-artist-name="id_15394482"
+            data-font="'American Typewriter', 'Ultra', sans-serif" data-language="en"
             data-display-details="false" data-text-color="#FFFFFF" data-display-logo="false"
-            data-separator-color="#FFFFFF" data-popup-background-color="#ffffff" data-link-color="#000"
-            data-link-text-color="#FFFFFF" data-display-play-my-city="false"></a>
-        </div>
-      <div id="youtube-embed" class="col-6">
-        <h2>Media</h2>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=mqbKj9-F-2SrnYC8&amp;list=PLg6ugZZhPvOGj6RbmeKoGmIBG9j5WVP4z" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-    </div>
-    <div id="sun"></div>
-  </section>
-  <!-- /Section: intro -->
-
-  <section id="contact" class="home-section text-center">
-    <div class="col widget-contact">
-      <div id="social-links" class="container flex col-6">
-        <address class="team-social">
-          <div class="social-facebook"><a href="https://www.facebook.com/unclemuskrat/" target="_blank"><i
-                class="fa fa-lg fa-facebook"></i></a></div>
-        </address>
-        <address class="team-social">
-          <div class="social-instagram"><a href="https://www.instagram.com/unclemuskrat/" target="_blank"><i
-                class="fa fa-lg fa-instagram"></i></a></div>
-        </address>
-        <address class="team-social">
-          <div class="social-spotify"><a href="https://open.spotify.com/artist/6wQ3Iph052h2tEVeXWaiDh" target="_blank"><i
-                class="fa fa-lg fa-spotify"></i></a></div>
-        </address>
-        <address class="team-social">
-          <div class="social-youtube"><a href="https://www.youtube.com/@unclemuskrat" target="_blank"><i
-                class="fa fa-lg fa-youtube"></i></a></div>
-        </address>
-        <address class="team-social">
-          <div class="social-bandsintown"><a href="https://bnds.us/j6qlrh" target="_blank">
-            <i class="fa fa-lg">
-              <svg width="23px" height="20px" viewBox="0 0 23 24" ariaLabelledby="bit-imgTitle bit-imgDesc" role="img">
-                <title id="bit-imgTitle">Bandsintown</title>
-                <desc id="bit-imgDesc">Bandsintown Fist Logo</desc>
-                <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" fillOpacity="0.402400362">
-                  <path d="M17.709,0 L22.917,0 L22.917,12.343 L17.709,12.343 L17.709,0 Z M11.806,5.829 L17.014,5.829 L17.014,12.343 L11.806,12.343 L11.806,5.829 Z M5.903,5.829 L11.111,5.829 L11.111,12.343 L5.903,12.343 L5.903,5.829 Z M22.917,24 L0,24 L0,0 L5.208,0 L5.208,18.857 L17.708,18.857 L17.708,18.171 L5.904,18.171 L5.904,13.03 L22.918,13.03 L22.918,24 L22.917,24 Z" id="Shape" fill="#FFFFFF" fillRule="nonzero"></path>
-                </g>
-              </svg>
-            </i></a></div>
-        </address>
-      </div>
-      
-      <address class="booking-link">
-        <a href="mailto:booking@unclemuskrat.com">booking@unclemuskrat.com</a>
-      </address>
-      <div class="booking-link"><a href="./assets/uncle-muskrat-epk.pdf" target="_blank">EPK and Stage Plot</a></div>
-    </div>
-  </section>
-
-  <!-- Section: contact -->
-<section id="shows" class="home-section text-center">
-    <img id="bg6" src="img/bg6.png"/>
-    <div class="container flex">
-      <!-- <div class="col-6 bandsintown">
-        <script charset="utf-8" src="https://widget.bandsintown.com/main.min.js"></script>
-        <a class="bit-widget-initializer" data-artist-name="id_15394482" data-font="sans-serif" data-language="en"
-          data-display-details="false" data-text-color="#000000" data-background-color="#e8e4df"
-          data-separator-color="#DDDDDD" data-popup-background-color="#ffffff" data-link-color="#685c5c"
-          data-link-text-color="#FFFFFF"></a>
-      </div> -->
-    </div>
-  </section>
-
-  
-
-
-  <!--<section id="music" class="home-section text-center">
-    <div class="col spotify">
-      <iframe style="border-radius:12px"
-        src="https://open.spotify.com/embed/artist/6wQ3Iph052h2tEVeXWaiDh?utm_source=generator&theme=0" width="100%"
-        height="380" frameBorder="0" allowfullscreen=""
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-    </div>
-  </section> -->
-
-  <!-- <footer>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 col-lg-12">
-          <p>&copy;Uncle Muskrat 2022. All rights reserved.</p>
+            data-separator-color="#FFFFFF" data-popup-background-color="#615CBF" data-link-color="#FFFFFF"
+            data-link-text-color="#615CBF" data-display-play-my-city="false"></a>
         </div>
       </div>
-    </div>
-  </footer> -->
+    </section>
 
-  <!-- Core JavaScript Files -->
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/jquery.easing.min.js"></script>
-  <script src="js/jquery.scrollTo.js"></script>
-  <script src="js/wow.min.js"></script>
-  <!-- Custom Theme JavaScript -->
-  <script src="js/custom.js"></script>
-  <script src="contactform/contactform.js"></script>
+    <!-- Bio — ridge (bg4) -->
+    <div class="ridge ridge--bio" aria-hidden="true"><img src="img/bg4.png" width="1920" height="567" alt=""></div>
+    <section id="bio" class="content content--bio">
+      <div class="content__inner">
+        <h2 class="content__heading">The Band</h2>
+        <!-- TODO: replace bio copy below with real band bio -->
+        <p class="bio__blurb">
+          Uncle Muskrat is a four-piece band serving up their own brand of high-energy
+          roots rock. This is placeholder text — swap it out for the real story.
+        </p>
+        <!-- /TODO -->
+        <ul class="bio__grid">
+          <li class="bio__member">
+            <img src="img/team/aaron.png" alt="Aaron" class="bio__photo">
+            <span class="bio__name">Aaron</span>
+          </li>
+          <li class="bio__member">
+            <img src="img/team/chris.png" alt="Chris" class="bio__photo">
+            <span class="bio__name">Chris</span>
+          </li>
+          <li class="bio__member">
+            <img src="img/team/conor.png" alt="Conor" class="bio__photo">
+            <span class="bio__name">Conor</span>
+          </li>
+          <li class="bio__member">
+            <img src="img/team/tim.png" alt="Tim" class="bio__photo">
+            <span class="bio__name">Tim</span>
+          </li>
+          <li class="bio__member bio__member--placeholder">
+            <!-- TODO: replace with <img src="img/team/alex.png" alt="Alex" class="bio__photo"> -->
+            <span class="bio__photo bio__photo--placeholder" role="img" aria-label="Alex photo coming soon">?</span>
+            <span class="bio__name">Alex</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Media — ridge (bg3) -->
+    <div class="ridge ridge--media" aria-hidden="true"><img src="img/bg3.png" width="1920" height="474" alt=""></div>
+    <section id="media" class="content content--media">
+      <div class="content__inner">
+        <h2 class="content__heading">Media</h2>
+        <div class="media__video">
+          <iframe src="https://www.youtube.com/embed/videoseries?si=mqbKj9-F-2SrnYC8&amp;list=PLg6ugZZhPvOGj6RbmeKoGmIBG9j5WVP4z"
+            title="Uncle Muskrat on YouTube" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        <div class="media__gallery">
+          <figure class="media__shot">
+            <img src="img/UncleMuskratValleyfairSoundcheck.jpg" alt="Uncle Muskrat soundcheck at Valleyfair" loading="lazy">
+          </figure>
+          <figure class="media__shot">
+            <img src="img/UncleMuskratTrioDerbyDay.jpg" alt="Uncle Muskrat trio on Derby Day" loading="lazy">
+          </figure>
+          <figure class="media__shot">
+            <img src="img/UncleMuskratFatherHennepin.jpg" alt="Uncle Muskrat at Father Hennepin" loading="lazy">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact — front ridge (bg2, darkest) -->
+    <div class="ridge ridge--contact" aria-hidden="true"><img src="img/bg2.png" width="1920" height="318" alt=""></div>
+    <section id="contact" class="content content--contact">
+      <div class="content__inner">
+        <h2 class="content__heading">Contact Us</h2>
+        <div class="contact__social">
+          <a href="https://www.facebook.com/unclemuskrat/" target="_blank" rel="noopener" aria-label="Facebook">
+            <i class="fa fa-lg fa-facebook"></i></a>
+          <a href="https://www.instagram.com/unclemuskrat/" target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fa fa-lg fa-instagram"></i></a>
+          <a href="https://open.spotify.com/artist/6wQ3Iph052h2tEVeXWaiDh" target="_blank" rel="noopener" aria-label="Spotify">
+            <i class="fa fa-lg fa-spotify"></i></a>
+          <a href="https://www.youtube.com/@unclemuskrat" target="_blank" rel="noopener" aria-label="YouTube">
+            <i class="fa fa-lg fa-youtube"></i></a>
+          <a href="https://bnds.us/j6qlrh" target="_blank" rel="noopener" aria-label="Bandsintown">
+            <svg width="23px" height="20px" viewBox="0 0 23 24" role="img" aria-labelledby="bit-imgTitle">
+              <title id="bit-imgTitle">Bandsintown</title>
+              <path d="M17.709,0 L22.917,0 L22.917,12.343 L17.709,12.343 L17.709,0 Z M11.806,5.829 L17.014,5.829 L17.014,12.343 L11.806,12.343 L11.806,5.829 Z M5.903,5.829 L11.111,5.829 L11.111,12.343 L5.903,12.343 L5.903,5.829 Z M22.917,24 L0,24 L0,0 L5.208,0 L5.208,18.857 L17.708,18.857 L17.708,18.171 L5.904,18.171 L5.904,13.03 L22.918,13.03 L22.918,24 L22.917,24 Z" fill="currentColor"></path>
+            </svg>
+          </a>
+        </div>
+        <address class="contact__booking">
+          <a href="mailto:booking@unclemuskrat.com">booking@unclemuskrat.com</a>
+        </address>
+        <div class="contact__epk">
+          <a href="./assets/uncle-muskrat-epk.pdf" target="_blank" rel="noopener">EPK and Stage Plot</a>
+        </div>
+        <p class="contact__copy">&copy; Uncle Muskrat</p>
+      </div>
+    </section>
+
+  </div><!-- /#page -->
+
+  <!-- Decorative front ridge (bg1, darkest): fixed at the bottom, in front of
+       everything, through all scrolling -->
+  <img class="terrain terrain--front" src="img/bg1.png" width="1920" height="245" alt="" aria-hidden="true">
+
+  <!-- Sits near the bottom of the first screen, in front of the range, and
+       simply scrolls away with the page -->
+  <span class="scroll-cue" aria-hidden="true"><span class="scroll-cue__chevron"></span></span>
 
 </body>
 

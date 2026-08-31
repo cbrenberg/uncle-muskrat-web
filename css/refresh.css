@@ -1,0 +1,567 @@
+/* =================================================================
+   Uncle Muskrat — stacked terrain range
+
+   On load the ridge headers (bg2-bg5) rest stacked at the bottom of
+   the viewport as a twilight range, with decorative bg6 behind and
+   bg1 in front. Each ridge is bottom-sticky: it is held at the bottom
+   until the page has scrolled far enough for its own place in the
+   document to arrive, then it releases and scrolls off the top with
+   its section. So a section only starts moving once the section above
+   it has been read to its end.
+
+   Everything that moves moves 1:1 with the scroll — this is plain
+   document flow plus sticky positioning. There is no JavaScript, no
+   scroll listener, no transform scrubbing and no scroll-snap.
+   ================================================================= */
+
+/* Bundled brand font so it renders everywhere (not just on machines
+   that happen to have American Typewriter installed). */
+@font-face {
+  font-family: 'American Typewriter';
+  src: url('../fonts/AmericanTypewriterRegular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Darkest ridge sits in front; image numbers ascend front -> back.
+     The back layer is read first, the front layer last. */
+  --bg5: #615CBF;  /* Shows   (back, lightest) */
+  --bg4: #564CAE;  /* Bio                      */
+  --bg3: #1F2B84;  /* Media                    */
+  --bg2: #091671;  /* Contact (front, darkest) */
+  --ink: #ffffff;
+  --footer-deep: #2a2150;
+  --ridge-front: #00073d;  /* bg1.png's solid body — the frontmost ridge */
+  /* original pre-redesign sunset (.bg-sepia) */
+  --sky-top: #c3617d;
+  --sunset: linear-gradient(var(--sky-top), #dd9e35);
+  --serif: 'American Typewriter', Georgia, serif;
+
+  /* How much of each resting ridge shows above the fold. Only the peaks
+     are visible; the rest of the image hangs below. Back ridge peeks
+     highest, front ridge lowest — a layered range.
+
+     svh (the small viewport, i.e. with the mobile URL bar showing) rather
+     than vh, so the range is laid out exactly as intended at scroll 0 —
+     which is the moment it matters most. Mobile browsers keep vh pinned to
+     the *large* viewport, so vh here would push the range partly below the
+     visible area on load. */
+  --peek-shows: 33svh;
+  --peek-bio: 27svh;
+  --peek-media: 22svh;
+  --peek-contact: 14svh;
+}
+
+* { box-sizing: border-box; }
+
+/* Suppress rubber-band overscroll.
+
+   bg6 is position:fixed, so at the end of the page the bounce pulled the
+   contact section up while bg6 stayed put, exposing a sliver of its light
+   purple between the section and the front ridge. Covering that gap is
+   awkward: bg6 is visible down to wherever bg5's silhouette turns opaque,
+   which is about 72svh on a phone but as deep as ~92svh on a wide desktop,
+   so any cover big enough for a hard flick would clip bg6's peaks at rest.
+
+   Removing the bounce removes the gap, at every viewport shape. It also
+   settles overscroll at the top of the page. Needs iOS 16+; older versions
+   just keep bouncing. */
+/* Suppress rubber-band overscroll.
+
+   bg6 is position:fixed, so at the end of the page the bounce pulled the
+   contact section up while bg6 stayed put, exposing a sliver of its light
+   purple between the section and the front ridge. Covering that gap is
+   awkward: bg6 stays visible down to wherever bg5's silhouette turns opaque,
+   roughly 72svh on a phone but as deep as ~92svh on a wide desktop, so a
+   cover large enough for a hard flick would clip bg6's peaks at rest.
+   Removing the bounce removes the gap at every viewport shape. Needs iOS 16+;
+   older versions simply keep bouncing.
+
+   The explicit background-color is the root fallback Safari uses for the
+   strip behind the notch. Without it a transparent root can fall back to
+   white on first paint, which is what that strip originally did.
+
+   KNOWN LIMITATION, deliberately accepted. On iOS the notch strip follows
+   each section as you scroll down, but keeps the last section's colour when
+   you scroll back to the top rather than returning to the sky. Ruled out as
+   causes, each tested on a real device: giving the hero its own background,
+   moving that gradient onto a pseudo-element, this root background-color,
+   the theme-color meta tag (Safari 26 ignores it for toolbar tinting),
+   overscroll-behavior itself, and an opaque full-width bar fixed flush to
+   the top edge. That last one was checked properly, in bright green and
+   meeting every published condition for a sampled element -- 4px tall, full
+   width, fully opaque, no opacity property, a real element rather than a
+   pseudo. The strip never turned green, so Safari is not reading a top-edge
+   element here at all, and the published sampling rules do not describe what
+   this version actually does. Isolated test pages showed Safari has two
+   modes here -- a solid root colour with no fixed or sticky elements pins
+   the strip to one colour and never tracks sections at all, while anything
+   else tracks but will not revert. This layout needs fixed and sticky
+   elements, so it sits in the second mode. Closing the gap would take
+   JavaScript, which is not worth it for a strip of browser chrome. */
+html {
+  overscroll-behavior-y: none;
+  background-color: var(--sky-top);
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  /* Only a flat colour here — the sky itself is painted by #page (see below).
+     This is what shows during rubber-band overscroll. */
+  background-color: var(--sky-top);
+}
+
+img { max-width: 100%; }
+
+/* =================================================================
+   Page shell
+
+   #page is the containing block the sticky ridges are clamped to, so
+   it has to span the whole document. Nothing in the chain from <html>
+   down to a ridge may set `overflow` — any value other than visible
+   turns that ancestor into the sticky scrollport and breaks the hold.
+
+   #page also paints the sky. Two reasons it lives here rather than on body:
+
+   1. iOS Safari has never properly supported background-attachment: fixed,
+      which was the previous way of confining the gradient to one viewport.
+      It falls back to sizing the image to the whole ~6000px document, so the
+      opening screen showed only the top sliver of the ramp and the sky read
+      as flat salmon. Sizing the layer explicitly works everywhere.
+   2. Safari tints the strip behind the notch by sampling an ELEMENT's
+      background, and will not sample the propagated body/canvas background.
+      With the sky on body, that strip had nothing to read: it came up white
+      on load, and kept the last colour it had sampled (the first ridge's
+      purple) when you scrolled back to the top. On a real element it tracks
+      the hero correctly.
+
+   #page starts at the document origin and spans the whole page, so one
+   declaration covers both the hero and the sky behind the first ridge's
+   transparent silhouette, with no seam between them.
+   ================================================================= */
+#page {
+  position: relative;
+  background-color: var(--sky-top);
+  background-image: var(--sunset);
+  background-repeat: no-repeat;
+  background-size: 100% 100svh;   /* the full ramp across one viewport */
+}
+
+/* =================================================================
+   Hero
+
+   Height is one viewport minus the first ridge's peek, which puts that
+   ridge's natural position exactly on its resting line at scroll 0.
+   It is therefore already at its release point and starts moving the
+   instant you scroll, rather than stalling for the first 33vh.
+   ================================================================= */
+#hero {
+  position: relative;
+  height: calc(100svh - var(--peek-shows));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero__logo {
+  position: relative;   /* paint above the decorative bg6 behind it */
+  width: min(90vw, 820px);
+}
+
+/* On a portrait screen the logo reads as far too small, because most of its
+   box is empty: banner_shrunk.png is 1920x840 but the artwork inside it is
+   only 1070x577, centred, with 425px of transparent margin on each side. So
+   the artwork is just 55.7% of the box width — about half the screen at
+   90vw, and only ~12% of the viewport's height.
+
+   Rather than crop the PNG, let the box grow past the viewport and clip the
+   transparent overhang: at 160vw the artwork itself spans ~89vw. The 820px
+   ceiling keeps portrait tablets from overshooting desktop's size.
+
+   NOTE: this leans on those transparent margins. If the logo is ever
+   replaced with a tightly-cropped image, drop this rule or it will render
+   enormous and clipped. */
+@media (max-aspect-ratio: 1 / 1) {
+  /* Safe here: the sticky ridges are siblings of #hero, not descendants,
+     so this clip cannot become their scrollport. */
+  #hero { overflow: hidden; }
+  .hero__logo {
+    width: min(160vw, 820px);
+    flex-shrink: 0;     /* it is a flex item; without this it shrinks back to fit */
+  }
+}
+
+.hero__logo img {
+  display: block;
+  width: 100%;
+  height: auto;         /* keep the original image's aspect ratio */
+  /* original logo drop shadow */
+  -webkit-filter: drop-shadow(4px 3px 7px #222);
+  filter: drop-shadow(4px 3px 7px #222);
+}
+
+/* =================================================================
+   Ridge headers
+
+   Bottom-sticky, so each is held at the bottom of the viewport while
+   its place in the document is still below the fold, then releases and
+   scrolls normally once the page reaches it.
+
+   To park a ridge showing only its top `--peek`, its bottom edge has to
+   sit (renderedHeight - peek) below the fold. The images are all 1920px
+   wide and set to width:100%, so renderedHeight is 100vw / --ar.
+
+   One formula covers both regimes. Wide/short viewports: the ridge is
+   taller than its peek, the value is negative, and the image overflows
+   below the fold. Narrow/tall viewports: the value is positive, the
+   image's bottom edge sits above the fold, and the ::after skirt fills
+   the remainder — which is what the range looks like on a phone, where
+   bg5 renders only ~111px against a 264px peek.
+   ================================================================= */
+.ridge {
+  position: sticky;
+  bottom: calc(var(--peek) - (100vw / var(--ar)));
+  display: block;
+  width: 100%;
+}
+
+.ridge > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  /* Subtle drop shadow cast upward so it sits along the top ridgeline,
+     then clip everything at/below the image's bottom edge so no shadow
+     bleeds onto the content beneath it. (clip-path is applied after
+     filter, so it trims the shadow; sides/top are left open.) */
+  -webkit-filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  -webkit-clip-path: inset(-160px -120px 0 -120px);
+  clip-path: inset(-160px -120px 0 -120px);
+}
+
+/* Solid colour skirt hanging below a parked ridge, in the colour of the
+   section it heads. Absolutely positioned, so it adds no flow height,
+   and once the ridge releases it is covered by that section's own
+   content — which is the same colour anyway.
+
+   Starting 4px up also covers the image's 1px anti-aliased bottom edge
+   (alpha ~241), which would otherwise composite the background through
+   it and show a faint seam. That replaces the old margin-bottom:-4px. */
+.ridge::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 4px);
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: var(--skirt);
+}
+
+.ridge--shows   { --peek: var(--peek-shows);   --ar: 3.5888; --skirt: var(--bg5); }
+.ridge--bio     { --peek: var(--peek-bio);     --ar: 3.3862; --skirt: var(--bg4); }
+.ridge--media   { --peek: var(--peek-media);   --ar: 4.0506; --skirt: var(--bg3); }
+.ridge--contact { --peek: var(--peek-contact); --ar: 6.0377; --skirt: var(--bg2); }
+
+/* =================================================================
+   Section content
+
+   Every ridge and content block is positioned with z-index:auto, so
+   paint order is simply tree order — which is exactly what is needed:
+   each section covers the ridge above it, and the ridges still parked
+   below cover that section. No z-index juggling.
+   ================================================================= */
+.content {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The ridge PNGs are silhouettes: everything above the ridgeline is
+   transparent. So each section's colour has to continue downward behind
+   the ridge that follows it, or that transparency shows the page's sunset
+   background once the ridge has lifted off the range.
+
+   Absolute, so it adds no flow height, and the next section covers it
+   completely. Sized to outrun the tallest ridge (bg4 at 29.53vw) even on
+   an extreme-aspect display. Skipped on the last section, which has no
+   ridge after it. */
+.content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: max(100vh, 30vw);
+  background: var(--band);
+}
+
+.content--contact::after { content: none; }
+
+/* Bottom padding keeps the text clear of the next ridge, which stays
+   parked over the bottom of the viewport for the whole section. */
+.content--shows   { background: var(--bg5); --band: var(--bg5); padding-bottom: 32vh; }
+.content--bio     { background: var(--bg4); --band: var(--bg4); padding-bottom: 27vh; }
+.content--media   { background: var(--bg3); --band: var(--bg3); padding-bottom: 19vh; }
+.content--contact {
+  background: linear-gradient(to bottom, var(--bg2) 0%, var(--footer-deep) 100%);
+  padding-bottom: 24vh;   /* clears the fixed bg1 */
+}
+
+.content__inner {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 6vh 6vw;
+  text-align: center;
+}
+
+.content__heading {
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.8em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* =================================================================
+   Decorative terrain
+
+   These two only enrich the range; they are not section headers. Both are
+   held at the bottom of the viewport: bg6 behind everything, so the sections
+   scroll over and bury it, and bg1 in front, so it stays visible throughout.
+   ================================================================= */
+.terrain {
+  width: 100%;
+  object-fit: cover;
+  object-position: top center;
+  pointer-events: none;
+  -webkit-filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
+  -webkit-clip-path: inset(-160px -120px 0 -120px);
+  clip-path: inset(-160px -120px 0 -120px);
+}
+
+/* Held at the bottom of the viewport, behind everything: it fills out the
+   range on load and is then progressively covered as each section scrolls
+   over it, rather than scrolling away with the hero. Height is capped (crop
+   the solid base, keep the silhouette) so it doesn't balloon at full desktop
+   width. */
+.terrain--back {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 36svh;
+}
+
+/* Safari tints the strip behind the bottom address bar by sampling the
+   scrolled document, not the fixed ridge sitting over it, so that band came
+   out the section's lighter purple instead of the near-black front ridge.
+   viewport-fit=cover lets the page paint into the strip; this pins a matching
+   slab under bg1 so the colour is guaranteed regardless of what Safari reads.
+   It sits inside bg1's solid lower body at every viewport shape, so it is
+   invisible on desktop. */
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(env(safe-area-inset-bottom, 0px), 4svh);
+  background: var(--ridge-front);
+  z-index: 9;            /* directly beneath .terrain--front */
+  pointer-events: none;
+}
+
+.terrain--front {
+  position: fixed;
+  left: 0;
+  bottom: -5svh;        /* sits a bit low on desktop */
+  height: auto;
+  min-height: 18svh;    /* stays visible on narrow / mobile screens */
+  z-index: 10;          /* always in front, at the bottom */
+}
+
+/* =================================================================
+   Scroll cue
+   ================================================================= */
+.scroll-cue {
+  position: absolute;
+  top: calc(100svh - 8vh);
+  left: 50%;
+  z-index: 21;          /* above the fixed front ridge (z-index 10) */
+  transform: translateX(-50%);
+  display: block;
+  width: 34px;
+  height: 34px;
+  animation: bob 1.8s ease-in-out infinite;
+}
+
+.scroll-cue__chevron {
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0 auto;
+  border-right: 3px solid rgba(255, 255, 255, 0.85);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.85);
+  transform: rotate(45deg);
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* =================================================================
+   Bio grid
+   ================================================================= */
+.bio__blurb {
+  max-width: 640px;
+  margin: 0 auto 2em;
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  line-height: 1.6;
+}
+
+.bio__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: clamp(12px, 3vw, 26px);
+}
+
+.bio__member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55em;
+}
+
+.bio__photo {
+  width: 100%;
+  max-width: 160px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.bio__photo--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 2.4rem;
+  box-shadow: none;
+}
+
+.bio__name {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* =================================================================
+   Media
+   ================================================================= */
+.media__video {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.6em;
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.media__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.media__gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 2vw, 18px);
+}
+
+.media__shot {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+.media__shot img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.media__shot:hover img { transform: scale(1.05); }
+
+/* =================================================================
+   Contact
+   ================================================================= */
+.contact__social {
+  display: flex;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 34px);
+  margin-bottom: 1.6em;
+}
+
+.contact__social a {
+  color: var(--ink);
+  font-size: 1.8rem;
+  line-height: 1;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.contact__social a:hover { opacity: 0.7; transform: translateY(-3px); }
+.contact__social svg { width: 1.6rem; height: 1.6rem; vertical-align: middle; }
+
+.contact__booking a,
+.contact__epk a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.contact__booking { font-style: normal; font-size: 1.25rem; margin-bottom: 0.8em; }
+.contact__epk { margin-bottom: 2em; }
+.contact__booking a:hover,
+.contact__epk a:hover { border-bottom-color: var(--ink); }
+
+.contact__copy { font-size: 0.85rem; opacity: 0.7; margin: 0; }
+
+/* =================================================================
+   Responsive / reduced motion
+
+   The layout itself is motion-free, so there is no separate fallback —
+   everyone gets the same page. Only the chevron's idle bob is animated.
+   ================================================================= */
+@media (max-width: 768px) {
+  .media__gallery { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue { animation: none; }
+}
