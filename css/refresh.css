@@ -68,9 +68,18 @@
    Removing the bounce removes the gap, at every viewport shape. It also
    settles overscroll at the top of the page. Needs iOS 16+; older versions
    just keep bouncing. */
-html {
-  overscroll-behavior-y: none;
+/* NOTE: overscroll-behavior-y: none is temporarily removed here.
 
+   Isolated test pages showed that adding it flipped Safari's BOTTOM toolbar
+   tint from the page colour to white, with no other change on the page --
+   direct evidence that this property perturbs toolbar tinting. It is being
+   removed to see whether it is also what stops the notch strip re-evaluating
+   when you scroll back to the top.
+
+   Removing it brings back the rubber-band sliver of bg6 at the end of the
+   page. If this turns out to be the cause, that gets handled with a cover
+   over bg6 instead. If it is not, this line comes back. */
+html {
   /* Explicit background-color on the ROOT, not just on body.
 
      Safari tints the strip behind the notch from real page pixels once you
