@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Notch test 1</title>
+<style>
+  html, body { margin: 0; background-color: #c3617d; }
+
+  .hero { height: 100svh; display: flex; align-items: center; justify-content: center; }
+  .sec  { min-height: 100svh; display: flex; align-items: center; justify-content: center; }
+  .hero, .sec { color: #fff; font: 600 19px/1.5 system-ui, sans-serif; text-align: center; padding: 0 24px; }
+  .a { background: #615CBF; } .b { background: #564CAE; } .c { background: #1F2B84; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <div><b>TEST 1 &mdash; baseline</b><br><br>
+    Notch should be SALMON on this screen.<br><br>
+    Scroll to the bottom, then back up here.<br>
+    Does the notch go back to salmon?</div>
+  </div>
+  <div class="sec a">purple 1<br>(notch should be purple)</div>
+  <div class="sec b">purple 2</div>
+  <div class="sec c">purple 3<br><br>now scroll back to the top</div>
+</body>
+</html>
