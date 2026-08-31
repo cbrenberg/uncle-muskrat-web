@@ -68,33 +68,35 @@
    Removing the bounce removes the gap, at every viewport shape. It also
    settles overscroll at the top of the page. Needs iOS 16+; older versions
    just keep bouncing. */
-/* NOTE: overscroll-behavior-y: none is temporarily removed here.
+/* Suppress rubber-band overscroll.
 
-   Isolated test pages showed that adding it flipped Safari's BOTTOM toolbar
-   tint from the page colour to white, with no other change on the page --
-   direct evidence that this property perturbs toolbar tinting. It is being
-   removed to see whether it is also what stops the notch strip re-evaluating
-   when you scroll back to the top.
+   bg6 is position:fixed, so at the end of the page the bounce pulled the
+   contact section up while bg6 stayed put, exposing a sliver of its light
+   purple between the section and the front ridge. Covering that gap is
+   awkward: bg6 stays visible down to wherever bg5's silhouette turns opaque,
+   roughly 72svh on a phone but as deep as ~92svh on a wide desktop, so a
+   cover large enough for a hard flick would clip bg6's peaks at rest.
+   Removing the bounce removes the gap at every viewport shape. Needs iOS 16+;
+   older versions simply keep bouncing.
 
-   Removing it brings back the rubber-band sliver of bg6 at the end of the
-   page. If this turns out to be the cause, that gets handled with a cover
-   over bg6 instead. If it is not, this line comes back. */
+   The explicit background-color is the root fallback Safari uses for the
+   strip behind the notch. Without it a transparent root can fall back to
+   white on first paint, which is what that strip originally did.
+
+   KNOWN LIMITATION, deliberately accepted. On iOS the notch strip follows
+   each section as you scroll down, but keeps the last section's colour when
+   you scroll back to the top rather than returning to the sky. Ruled out as
+   causes, each tested on a real device: giving the hero its own background,
+   moving that gradient onto a pseudo-element, this root background-color,
+   the theme-color meta tag (Safari 26 ignores it for toolbar tinting), and
+   overscroll-behavior itself. Isolated test pages showed Safari has two
+   modes here -- a solid root colour with no fixed or sticky elements pins
+   the strip to one colour and never tracks sections at all, while anything
+   else tracks but will not revert. This layout needs fixed and sticky
+   elements, so it sits in the second mode. Closing the gap would take
+   JavaScript, which is not worth it for a strip of browser chrome. */
 html {
-  /* Explicit background-color on the ROOT, not just on body.
-
-     Safari tints the strip behind the notch from real page pixels once you
-     have scrolled, but at scrollY 0 it falls back to the root's own
-     background-color -- and a transparent root falls back to white. body's
-     colour propagates to the canvas, but html's own computed background-color
-     stayed transparent, so returning to the top left the strip holding the
-     last colour Safari had composited: the first section's purple.
-
-     Safari also samples only background-color (and backdrop-filter) on fixed
-     and sticky boxes near a viewport edge. Pseudo-elements, absolutely
-     positioned children, background images and theme-color are all ignored,
-     which is why giving the hero a background and then splitting its gradient
-     onto a pseudo-element both changed nothing: the hero is a normal-flow box
-     and was never being read. */
+  overscroll-behavior-y: none;
   background-color: var(--sky-top);
 }
 
