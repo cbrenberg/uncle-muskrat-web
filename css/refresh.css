@@ -559,3 +559,32 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue { animation: none; }
 }
+
+/* =================================================================
+   TEMPORARY DIAGNOSTIC - REMOVE BEFORE MERGING
+
+   One question only: will Safari sample a fixed element at the top edge to
+   tint the notch strip? Every earlier attempt assumed something about that
+   sampler and failed, and the one probe that tested it was invalid - it
+   carried opacity: 0, which reportedly defeats the sampler, and it was the
+   same colour as the root, so a hit and a miss would have looked identical.
+
+   This bar is deliberately the wrong colour so the result cannot be
+   misread. Green in the strip means the path works and a sticky bar per
+   section can drive it properly; salmon or purple means it does not, and
+   the notch behaviour stays as it is.
+
+   Meets every documented condition: flush to the top, full width, 4px tall,
+   fully opaque, no opacity property, and a real element rather than a
+   pseudo-element.
+   ================================================================= */
+.notch-probe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #00ff00;
+  z-index: 30;
+  pointer-events: none;
+}
