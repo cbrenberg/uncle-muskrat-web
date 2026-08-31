@@ -165,15 +165,6 @@
        simply scrolls away with the page -->
   <span class="scroll-cue" aria-hidden="true"><span class="scroll-cue__chevron"></span></span>
 
-  <!-- TEMPORARY DIAGNOSTIC - REMOVE BEFORE MERGING (see css/refresh.css).
-       Tests whether Safari will sample a fixed element at the top edge to tint
-       the notch strip. Deliberately bright green so the answer is unambiguous:
-       any green in that strip means the sampling path works, and a sticky bar
-       per section could then drive it properly. A real element, not a pseudo,
-       and it meets every documented condition - flush to the top, full width,
-       4px tall, fully opaque, and carrying no opacity property. -->
-  <div class="notch-probe" aria-hidden="true"></div>
-
 </body>
 
 </html>
