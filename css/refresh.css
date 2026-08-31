@@ -140,10 +140,30 @@ img { max-width: 100%; }
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Solid, and deliberately WITHOUT a background-image -- see ::before.
+     This is the colour Safari reads for the notch strip. */
   background-color: var(--sky-top);
+}
+
+/* The gradient rides on a pseudo-element rather than on #hero itself.
+
+   Safari samples the notch strip from a solid background-color and appears to
+   skip a box that carries a background-image: the strip tracked the sections
+   (solid colours) and was right on load (the canvas, also solid), but with the
+   gradient on #hero it would not revert when scrolling back to the top -- it
+   held the last section colour it had read. Splitting the two gives the
+   sampler a plain colour to find while the sky still renders.
+
+   Same box as #hero and the same sizing as #page, so all three gradients stay
+   aligned and there is no seam. */
+#hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background-image: var(--sunset);
   background-repeat: no-repeat;
   background-size: 100% 100svh;
+  pointer-events: none;
 }
 
 .hero__logo {
