@@ -33,8 +33,10 @@
   --bg2: #091671;  /* Contact (front, darkest) */
   --ink: #ffffff;
   --footer-deep: #2a2150;
+  --ridge-front: #00073d;  /* bg1.png's solid body — the frontmost ridge */
   /* original pre-redesign sunset (.bg-sepia) */
-  --sunset: linear-gradient(#c3617d, #dd9e35);
+  --sky-top: #c3617d;
+  --sunset: linear-gradient(var(--sky-top), #dd9e35);
   --serif: 'American Typewriter', Georgia, serif;
 
   /* How much of each resting ridge shows above the fold. Only the peaks
@@ -60,14 +62,9 @@ body {
   font-family: var(--serif);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
-  background: var(--sunset);
-  /* Size the sunset to the viewport rather than to the whole document.
-     Without this the gradient is stretched over the full ~6000px page, so
-     the first screen only ever shows its top sliver and the sky reads as
-     flat pink. Fixed also keeps it steady behind the range while the hero
-     scrolls off, the way the pinned stage used to. Same treatment the links
-     page already uses. */
-  background-attachment: fixed;
+  /* Only a flat colour here — the sky itself is painted by #page (see below).
+     This is what shows during rubber-band overscroll. */
+  background-color: var(--sky-top);
 }
 
 img { max-width: 100%; }
@@ -79,8 +76,32 @@ img { max-width: 100%; }
    it has to span the whole document. Nothing in the chain from <html>
    down to a ridge may set `overflow` — any value other than visible
    turns that ancestor into the sticky scrollport and breaks the hold.
+
+   #page also paints the sky. Two reasons it lives here rather than on body:
+
+   1. iOS Safari has never properly supported background-attachment: fixed,
+      which was the previous way of confining the gradient to one viewport.
+      It falls back to sizing the image to the whole ~6000px document, so the
+      opening screen showed only the top sliver of the ramp and the sky read
+      as flat salmon. Sizing the layer explicitly works everywhere.
+   2. Safari tints the strip behind the notch by sampling an ELEMENT's
+      background, and will not sample the propagated body/canvas background.
+      With the sky on body, that strip had nothing to read: it came up white
+      on load, and kept the last colour it had sampled (the first ridge's
+      purple) when you scrolled back to the top. On a real element it tracks
+      the hero correctly.
+
+   #page starts at the document origin and spans the whole page, so one
+   declaration covers both the hero and the sky behind the first ridge's
+   transparent silhouette, with no seam between them.
    ================================================================= */
-#page { position: relative; }
+#page {
+  position: relative;
+  background-color: var(--sky-top);
+  background-image: var(--sunset);
+  background-repeat: no-repeat;
+  background-size: 100% 100svh;   /* the full ramp across one viewport */
+}
 
 /* =================================================================
    Hero
@@ -289,6 +310,25 @@ img { max-width: 100%; }
   left: 0;
   bottom: 0;
   height: 36svh;
+}
+
+/* Safari tints the strip behind the bottom address bar by sampling the
+   scrolled document, not the fixed ridge sitting over it, so that band came
+   out the section's lighter purple instead of the near-black front ridge.
+   viewport-fit=cover lets the page paint into the strip; this pins a matching
+   slab under bg1 so the colour is guaranteed regardless of what Safari reads.
+   It sits inside bg1's solid lower body at every viewport shape, so it is
+   invisible on desktop. */
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(env(safe-area-inset-bottom, 0px), 4svh);
+  background: var(--ridge-front);
+  z-index: 9;            /* directly beneath .terrain--front */
+  pointer-events: none;
 }
 
 .terrain--front {

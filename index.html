@@ -3,7 +3,10 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- viewport-fit=cover lets the page paint into the notch and home-indicator
+       strips, so those blend with whatever layer is at that edge instead of
+       Safari picking a fill colour for them. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Uncle Muskrat — official site. Shows, music, and media.">
   <meta name="author" content="Uncle Muskrat">
 
@@ -29,13 +32,13 @@
        far enough for its own place in the document to arrive, at which point it
        releases and scrolls off the top with its section. No scripting — every
        moving thing moves 1:1 with the scroll. -->
-  <!-- Decorative back ridge (bg6): held at the bottom of the viewport behind
-       everything else, so it fills out the range on load and is then covered
-       up as each section scrolls over it. Declared first so everything paints
-       on top of it. -->
-  <img class="terrain terrain--back" src="img/bg6.png" width="1920" height="570" alt="" aria-hidden="true">
-
   <div id="page">
+
+    <!-- Decorative back ridge (bg6): held at the bottom of the viewport behind
+         everything else, so it fills out the range on load and is then covered
+         up as each section scrolls over it. Declared first inside #page so it
+         paints over that element's sky but under everything that follows. -->
+    <img class="terrain terrain--back" src="img/bg6.png" width="1920" height="570" alt="" aria-hidden="true">
 
     <header id="hero">
       <div class="hero__logo">
