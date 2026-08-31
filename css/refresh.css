@@ -1,11 +1,17 @@
 /* =================================================================
-   Uncle Muskrat — rising-terrain reveal
-   On load, three ridge headers (bg1 / bg3 / bg5) are stacked at the
-   bottom as a twilight range. Scrolling raises them one at a time,
-   back to front: each ridge lifts up and off the top, revealing its
-   section's content beneath. A risen ridge is gone — only content
-   remains. JS (js/scroll.js) scrubs the transforms; this file also
-   provides a static fallback when motion is reduced / JS is off.
+   Uncle Muskrat — stacked terrain range
+
+   On load the ridge headers (bg2-bg5) rest stacked at the bottom of
+   the viewport as a twilight range, with decorative bg6 behind and
+   bg1 in front. Each ridge is bottom-sticky: it is held at the bottom
+   until the page has scrolled far enough for its own place in the
+   document to arrive, then it releases and scrolls off the top with
+   its section. So a section only starts moving once the section above
+   it has been read to its end.
+
+   Everything that moves moves 1:1 with the scroll — this is plain
+   document flow plus sticky positioning. There is no JavaScript, no
+   scroll listener, no transform scrubbing and no scroll-snap.
    ================================================================= */
 
 /* Bundled brand font so it renders everywhere (not just on machines
@@ -20,21 +26,33 @@
 
 :root {
   /* Darkest ridge sits in front; image numbers ascend front -> back.
-     The back layer reveals first, the front layer last. */
-  --bg5: #615CBF;  /* Shows   (layer 0, back, lightest) */
-  --bg4: #564CAE;  /* Bio     (layer 1)                 */
-  --bg3: #1F2B84;  /* Media   (layer 2)                 */
-  --bg2: #091671;  /* Contact (layer 3, front, darkest) */
+     The back layer is read first, the front layer last. */
+  --bg5: #615CBF;  /* Shows   (back, lightest) */
+  --bg4: #564CAE;  /* Bio                      */
+  --bg3: #1F2B84;  /* Media                    */
+  --bg2: #091671;  /* Contact (front, darkest) */
   --ink: #ffffff;
   --footer-deep: #2a2150;
   /* original pre-redesign sunset (.bg-sepia) */
   --sunset: linear-gradient(#c3617d, #dd9e35);
   --serif: 'American Typewriter', Georgia, serif;
+
+  /* How much of each resting ridge shows above the fold. Only the peaks
+     are visible; the rest of the image hangs below. Back ridge peeks
+     highest, front ridge lowest — a layered range.
+
+     svh (the small viewport, i.e. with the mobile URL bar showing) rather
+     than vh, so the range is laid out exactly as intended at scroll 0 —
+     which is the moment it matters most. Mobile browsers keep vh pinned to
+     the *large* viewport, so vh here would push the range partly below the
+     visible area on load. */
+  --peek-shows: 33svh;
+  --peek-bio: 27svh;
+  --peek-media: 22svh;
+  --peek-contact: 14svh;
 }
 
 * { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -43,26 +61,113 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   background: var(--sunset);
+  /* Size the sunset to the viewport rather than to the whole document.
+     Without this the gradient is stretched over the full ~6000px page, so
+     the first screen only ever shows its top sliver and the sky reads as
+     flat pink. Fixed also keeps it steady behind the range while the hero
+     scrolls off, the way the pinned stage used to. Same treatment the links
+     page already uses. */
+  background-attachment: fixed;
 }
 
 img { max-width: 100%; }
 
 /* =================================================================
-   Shared content styling (used by both layouts)
+   Page shell
+
+   #page is the containing block the sticky ridges are clamped to, so
+   it has to span the whole document. Nothing in the chain from <html>
+   down to a ridge may set `overflow` — any value other than visible
+   turns that ancestor into the sticky scrollport and breaks the hold.
    ================================================================= */
-.layer__ridge {
+#page { position: relative; }
+
+/* =================================================================
+   Hero
+
+   Height is one viewport minus the first ridge's peek, which puts that
+   ridge's natural position exactly on its resting line at scroll 0.
+   It is therefore already at its release point and starts moving the
+   instant you scroll, rather than stalling for the first 33vh.
+   ================================================================= */
+#hero {
+  position: relative;
+  height: calc(100svh - var(--peek-shows));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero__logo {
+  position: relative;   /* paint above the decorative bg6 behind it */
+  width: min(90vw, 820px);
+}
+
+/* On a portrait screen the logo reads as far too small, because most of its
+   box is empty: banner_shrunk.png is 1920x840 but the artwork inside it is
+   only 1070x577, centred, with 425px of transparent margin on each side. So
+   the artwork is just 55.7% of the box width — about half the screen at
+   90vw, and only ~12% of the viewport's height.
+
+   Rather than crop the PNG, let the box grow past the viewport and clip the
+   transparent overhang: at 160vw the artwork itself spans ~89vw. The 820px
+   ceiling keeps portrait tablets from overshooting desktop's size.
+
+   NOTE: this leans on those transparent margins. If the logo is ever
+   replaced with a tightly-cropped image, drop this rule or it will render
+   enormous and clipped. */
+@media (max-aspect-ratio: 1 / 1) {
+  /* Safe here: the sticky ridges are siblings of #hero, not descendants,
+     so this clip cannot become their scrollport. */
+  #hero { overflow: hidden; }
+  .hero__logo {
+    width: min(160vw, 820px);
+    flex-shrink: 0;     /* it is a flex item; without this it shrinks back to fit */
+  }
+}
+
+.hero__logo img {
+  display: block;
+  width: 100%;
+  height: auto;         /* keep the original image's aspect ratio */
+  /* original logo drop shadow */
+  -webkit-filter: drop-shadow(4px 3px 7px #222);
+  filter: drop-shadow(4px 3px 7px #222);
+}
+
+/* =================================================================
+   Ridge headers
+
+   Bottom-sticky, so each is held at the bottom of the viewport while
+   its place in the document is still below the fold, then releases and
+   scrolls normally once the page reaches it.
+
+   To park a ridge showing only its top `--peek`, its bottom edge has to
+   sit (renderedHeight - peek) below the fold. The images are all 1920px
+   wide and set to width:100%, so renderedHeight is 100vw / --ar.
+
+   One formula covers both regimes. Wide/short viewports: the ridge is
+   taller than its peek, the value is negative, and the image overflows
+   below the fold. Narrow/tall viewports: the value is positive, the
+   image's bottom edge sits above the fold, and the ::after skirt fills
+   the remainder — which is what the range looks like on a phone, where
+   bg5 renders only ~111px against a 264px peek.
+   ================================================================= */
+.ridge {
+  position: sticky;
+  bottom: calc(var(--peek) - (100vw / var(--ar)));
+  display: block;
+  width: 100%;
+}
+
+.ridge > img {
   display: block;
   width: 100%;
   height: auto;
-  /* Overlap the content by a few px so the image's 1px anti-aliased
-     bottom edge (alpha ~241) is covered by the opaque, matching-color
-     content instead of compositing the background through it (which
-     otherwise shows a faint seam on the rear-most layer over the sky). */
-  margin-bottom: -4px;
   pointer-events: none;
   /* Subtle drop shadow cast upward so it sits along the top ridgeline,
      then clip everything at/below the image's bottom edge so no shadow
-     bleeds onto the content div beneath it. (clip-path is applied after
+     bleeds onto the content beneath it. (clip-path is applied after
      filter, so it trims the shadow; sides/top are left open.) */
   -webkit-filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
   filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
@@ -70,10 +175,75 @@ img { max-width: 100%; }
   clip-path: inset(-160px -120px 0 -120px);
 }
 
-.content--shows   { background: var(--bg5); }
-.content--bio     { background: var(--bg4); }
-.content--media   { background: var(--bg3); }
-.content--contact { background: linear-gradient(to bottom, var(--bg2) 0%, var(--footer-deep) 100%); }
+/* Solid colour skirt hanging below a parked ridge, in the colour of the
+   section it heads. Absolutely positioned, so it adds no flow height,
+   and once the ridge releases it is covered by that section's own
+   content — which is the same colour anyway.
+
+   Starting 4px up also covers the image's 1px anti-aliased bottom edge
+   (alpha ~241), which would otherwise composite the background through
+   it and show a faint seam. That replaces the old margin-bottom:-4px. */
+.ridge::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 4px);
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: var(--skirt);
+}
+
+.ridge--shows   { --peek: var(--peek-shows);   --ar: 3.5888; --skirt: var(--bg5); }
+.ridge--bio     { --peek: var(--peek-bio);     --ar: 3.3862; --skirt: var(--bg4); }
+.ridge--media   { --peek: var(--peek-media);   --ar: 4.0506; --skirt: var(--bg3); }
+.ridge--contact { --peek: var(--peek-contact); --ar: 6.0377; --skirt: var(--bg2); }
+
+/* =================================================================
+   Section content
+
+   Every ridge and content block is positioned with z-index:auto, so
+   paint order is simply tree order — which is exactly what is needed:
+   each section covers the ridge above it, and the ridges still parked
+   below cover that section. No z-index juggling.
+   ================================================================= */
+.content {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The ridge PNGs are silhouettes: everything above the ridgeline is
+   transparent. So each section's colour has to continue downward behind
+   the ridge that follows it, or that transparency shows the page's sunset
+   background once the ridge has lifted off the range.
+
+   Absolute, so it adds no flow height, and the next section covers it
+   completely. Sized to outrun the tallest ridge (bg4 at 29.53vw) even on
+   an extreme-aspect display. Skipped on the last section, which has no
+   ridge after it. */
+.content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: max(100vh, 30vw);
+  background: var(--band);
+}
+
+.content--contact::after { content: none; }
+
+/* Bottom padding keeps the text clear of the next ridge, which stays
+   parked over the bottom of the viewport for the whole section. */
+.content--shows   { background: var(--bg5); --band: var(--bg5); padding-bottom: 32vh; }
+.content--bio     { background: var(--bg4); --band: var(--bg4); padding-bottom: 27vh; }
+.content--media   { background: var(--bg3); --band: var(--bg3); padding-bottom: 19vh; }
+.content--contact {
+  background: linear-gradient(to bottom, var(--bg2) 0%, var(--footer-deep) 100%);
+  padding-bottom: 24vh;   /* clears the fixed bg1 */
+}
 
 .content__inner {
   width: 100%;
@@ -91,84 +261,17 @@ img { max-width: 100%; }
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
-.stage__logo { text-align: center; }
-.stage__logo img {
-  width: min(620px, 80vw);
-  height: auto;
-  /* original logo drop shadow */
-  -webkit-filter: drop-shadow(4px 3px 7px #222);
-  filter: drop-shadow(4px 3px 7px #222);
-}
-
 /* =================================================================
-   Static fallback (no .js-reveal): a clean stacked page
+   Decorative terrain
+
+   These two only enrich the range; they are not section headers. Both are
+   held at the bottom of the viewport: bg6 behind everything, so the sections
+   scroll over and bury it, and bg1 in front, so it stays visible throughout.
    ================================================================= */
-.stage__logo {
-  padding: 14vh 6vw 8vh;
-}
-
-.layer__content { min-height: 60vh; display: flex; align-items: center; }
-
-/* =================================================================
-   Scroll-reveal layout (.js-reveal)
-   ================================================================= */
-.js-reveal #reveal-track { position: relative; }   /* height set by JS */
-
-.js-reveal #stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--sunset);
-}
-
-.js-reveal .stage__logo {
-  position: absolute;
-  top: 33%;                 /* about a third of the way down */
-  left: 50%;
-  width: min(90vw, 820px);  /* prominent on desktop and mobile */
-  transform: translate(-50%, -50%);
-  transform-origin: center center;
-  z-index: 0;               /* behind the layers, so content covers it on scroll */
-  padding: 0;
-  will-change: transform, opacity;
-}
-
-.js-reveal .stage__logo img {
-  display: block;
+.terrain {
   width: 100%;
-  height: auto;             /* keep the original image's aspect ratio */
-}
-
-.js-reveal .layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  /* No will-change / 3D transform here: forcing a permanent GPU layer
-     makes Chrome drop subpixel text antialiasing (text looks heavier /
-     edges blend). The 2D translateY set by JS lets text stay crisp. */
-}
-
-/* later-revealed layers paint over earlier ones during transitions */
-.js-reveal .layer[data-i="0"] { z-index: 1; }
-.js-reveal .layer[data-i="1"] { z-index: 2; }
-.js-reveal .layer[data-i="2"] { z-index: 3; }
-.js-reveal .layer[data-i="3"] { z-index: 4; }
-
-/* Decorative, non-scrolling ridges that only enrich the on-load range.
-   bg6 sits at the back (content covers it as it rises); bg1 stays in
-   front at the bottom through all scrolling. Hidden in the static
-   fallback. They are NOT .layer elements, so the scrub ignores them. */
-.terrain { display: none; }
-
-.js-reveal .terrain {
-  display: block;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: auto;
+  object-fit: cover;
+  object-position: top center;
   pointer-events: none;
   -webkit-filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
   filter: drop-shadow(0 -2px 7px rgba(34, 34, 34, 0.5));
@@ -176,43 +279,35 @@ img { max-width: 100%; }
   clip-path: inset(-160px -120px 0 -120px);
 }
 
-/* behind every content layer; cap height on wide screens (crop the solid
-   base, keep the silhouette) so bg6 doesn't balloon at full desktop width */
-.js-reveal .terrain--back {
-  z-index: 0;
-  min-height: 36vh;   /* stay visible (and above bg5) on narrow screens */
-  max-height: 36vh;   /* but don't balloon on wide desktops */
-  object-fit: cover;
-  object-position: top center;
+/* Held at the bottom of the viewport, behind everything: it fills out the
+   range on load and is then progressively covered as each section scrolls
+   over it, rather than scrolling away with the hero. Height is capped (crop
+   the solid base, keep the silhouette) so it doesn't balloon at full desktop
+   width. */
+.terrain--back {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 36svh;
 }
-.js-reveal .terrain--front {
+
+.terrain--front {
+  position: fixed;
+  left: 0;
+  bottom: -5svh;        /* sits a bit low on desktop */
+  height: auto;
+  min-height: 18svh;    /* stays visible on narrow / mobile screens */
   z-index: 10;          /* always in front, at the bottom */
-  bottom: -5vh;         /* sits a bit low on desktop */
-  min-height: 18vh;     /* stays visible on narrow / mobile screens */
-  object-fit: cover;
-  object-position: top center;
 }
 
-.js-reveal .layer__content {
-  /* slightly over 100vh so the settled content (shifted up a couple px to
-     clear the ridge) still covers the very bottom — no sliver of background */
-  min-height: calc(100vh + 8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* keep content clear of lower ridges still stacked at the bottom */
-.js-reveal .content--shows .content__inner,
-.js-reveal .content--bio .content__inner {
-  padding-bottom: 40vh;
-}
-
+/* =================================================================
+   Scroll cue
+   ================================================================= */
 .scroll-cue {
   position: absolute;
-  bottom: 4vh;
+  top: calc(100svh - 8vh);
   left: 50%;
-  z-index: 21;
+  z-index: 21;          /* above the fixed front ridge (z-index 10) */
   transform: translateX(-50%);
   display: block;
   width: 34px;
@@ -334,7 +429,7 @@ img { max-width: 100%; }
 .media__shot:hover img { transform: scale(1.05); }
 
 /* =================================================================
-   Contact (now the 4th terrain layer — see .content--contact above)
+   Contact
    ================================================================= */
 .contact__social {
   display: flex;
@@ -369,12 +464,14 @@ img { max-width: 100%; }
 
 /* =================================================================
    Responsive / reduced motion
+
+   The layout itself is motion-free, so there is no separate fallback —
+   everyone gets the same page. Only the chevron's idle bob is animated.
    ================================================================= */
 @media (max-width: 768px) {
   .media__gallery { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
   .scroll-cue { animation: none; }
 }
