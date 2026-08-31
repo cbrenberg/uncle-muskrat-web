@@ -111,16 +111,32 @@ img { max-width: 100%; }
    It is therefore already at its release point and starts moving the
    instant you scroll, rather than stalling for the first 33vh.
    ================================================================= */
+/* The hero carries its own copy of the sky, rather than letting #page's show
+   through, for one reason: Safari reads the notch strip from the background of
+   the element at the top edge, and treats a transparent one as "no change".
+   With the hero transparent, scrolling back to the top left that strip stuck on
+   the last colour it had sampled -- the first section's purple -- even though
+   the sky was visibly behind it again.
+
+   Both boxes start at the document origin and use the same size, so the two
+   gradients land pixel-for-pixel and there is no seam where the hero ends. */
 #hero {
   position: relative;
   height: calc(100svh - var(--peek-shows));
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--sky-top);
+  background-image: var(--sunset);
+  background-repeat: no-repeat;
+  background-size: 100% 100svh;
 }
 
 .hero__logo {
-  position: relative;   /* paint above the decorative bg6 behind it */
+  position: relative;
+  z-index: 1;           /* stay above bg6, which now paints after the hero.
+                           Matters on short landscape screens, where the logo
+                           is taller than the hero and reaches bg6's peaks. */
   width: min(90vw, 820px);
 }
 
