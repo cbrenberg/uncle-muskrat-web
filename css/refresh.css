@@ -56,6 +56,20 @@
 
 * { box-sizing: border-box; }
 
+/* Suppress rubber-band overscroll.
+
+   bg6 is position:fixed, so at the end of the page the bounce pulled the
+   contact section up while bg6 stayed put, exposing a sliver of its light
+   purple between the section and the front ridge. Covering that gap is
+   awkward: bg6 is visible down to wherever bg5's silhouette turns opaque,
+   which is about 72svh on a phone but as deep as ~92svh on a wide desktop,
+   so any cover big enough for a hard flick would clip bg6's peaks at rest.
+
+   Removing the bounce removes the gap, at every viewport shape. It also
+   settles overscroll at the top of the page. Needs iOS 16+; older versions
+   just keep bouncing. */
+html { overscroll-behavior-y: none; }
+
 body {
   margin: 0;
   color: var(--ink);
