@@ -68,7 +68,26 @@
    Removing the bounce removes the gap, at every viewport shape. It also
    settles overscroll at the top of the page. Needs iOS 16+; older versions
    just keep bouncing. */
-html { overscroll-behavior-y: none; }
+html {
+  overscroll-behavior-y: none;
+
+  /* Explicit background-color on the ROOT, not just on body.
+
+     Safari tints the strip behind the notch from real page pixels once you
+     have scrolled, but at scrollY 0 it falls back to the root's own
+     background-color -- and a transparent root falls back to white. body's
+     colour propagates to the canvas, but html's own computed background-color
+     stayed transparent, so returning to the top left the strip holding the
+     last colour Safari had composited: the first section's purple.
+
+     Safari also samples only background-color (and backdrop-filter) on fixed
+     and sticky boxes near a viewport edge. Pseudo-elements, absolutely
+     positioned children, background images and theme-color are all ignored,
+     which is why giving the hero a background and then splitting its gradient
+     onto a pseudo-element both changed nothing: the hero is a normal-flow box
+     and was never being read. */
+  background-color: var(--sky-top);
+}
 
 body {
   margin: 0;
@@ -125,52 +144,16 @@ img { max-width: 100%; }
    It is therefore already at its release point and starts moving the
    instant you scroll, rather than stalling for the first 33vh.
    ================================================================= */
-/* The hero carries its own copy of the sky, rather than letting #page's show
-   through, for one reason: Safari reads the notch strip from the background of
-   the element at the top edge, and treats a transparent one as "no change".
-   With the hero transparent, scrolling back to the top left that strip stuck on
-   the last colour it had sampled -- the first section's purple -- even though
-   the sky was visibly behind it again.
-
-   Both boxes start at the document origin and use the same size, so the two
-   gradients land pixel-for-pixel and there is no seam where the hero ends. */
 #hero {
   position: relative;
   height: calc(100svh - var(--peek-shows));
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Solid, and deliberately WITHOUT a background-image -- see ::before.
-     This is the colour Safari reads for the notch strip. */
-  background-color: var(--sky-top);
-}
-
-/* The gradient rides on a pseudo-element rather than on #hero itself.
-
-   Safari samples the notch strip from a solid background-color and appears to
-   skip a box that carries a background-image: the strip tracked the sections
-   (solid colours) and was right on load (the canvas, also solid), but with the
-   gradient on #hero it would not revert when scrolling back to the top -- it
-   held the last section colour it had read. Splitting the two gives the
-   sampler a plain colour to find while the sky still renders.
-
-   Same box as #hero and the same sizing as #page, so all three gradients stay
-   aligned and there is no seam. */
-#hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--sunset);
-  background-repeat: no-repeat;
-  background-size: 100% 100svh;
-  pointer-events: none;
 }
 
 .hero__logo {
-  position: relative;
-  z-index: 1;           /* stay above bg6, which now paints after the hero.
-                           Matters on short landscape screens, where the logo
-                           is taller than the hero and reaches bg6's peaks. */
+  position: relative;   /* paint above the decorative bg6 behind it */
   width: min(90vw, 820px);
 }
 

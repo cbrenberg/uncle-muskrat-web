@@ -34,18 +34,17 @@
        moving thing moves 1:1 with the scroll. -->
   <div id="page">
 
+    <!-- Decorative back ridge (bg6): held at the bottom of the viewport behind
+         everything else, so it fills out the range on load and is then covered
+         up as each section scrolls over it. Declared before the logo so the
+         logo always paints on top. -->
+    <img class="terrain terrain--back" src="img/bg6.png" width="1920" height="570" alt="" aria-hidden="true">
+
     <header id="hero">
       <div class="hero__logo">
         <img src="img/banner_shrunk.png" width="1920" height="840" alt="Uncle Muskrat">
       </div>
     </header>
-
-    <!-- Decorative back ridge (bg6): held at the bottom of the viewport behind
-         everything else, so it fills out the range on load and is then covered
-         up as each section scrolls over it. Declared after #hero so the hero's
-         own sky does not paint over its peaks, and before the ridges so they
-         still bury it. -->
-    <img class="terrain terrain--back" src="img/bg6.png" width="1920" height="570" alt="" aria-hidden="true">
 
     <!-- Shows — back ridge (bg5, lightest) -->
     <div class="ridge ridge--shows" aria-hidden="true"><img src="img/bg5.png" width="1920" height="535" alt=""></div>
